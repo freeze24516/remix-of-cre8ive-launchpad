@@ -14,16 +14,339 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      creator_categories: {
+        Row: {
+          category_id: string
+          creator_id: string
+        }
+        Insert: {
+          category_id: string
+          creator_id: string
+        }
+        Update: {
+          category_id?: string
+          creator_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creator_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "creator_categories_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creator_skills: {
+        Row: {
+          creator_id: string
+          skill: string
+        }
+        Insert: {
+          creator_id: string
+          skill: string
+        }
+        Update: {
+          creator_id?: string
+          skill?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creator_skills_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      creators: {
+        Row: {
+          about: string | null
+          availability: Database["public"]["Enums"]["availability_status"]
+          created_at: string
+          experience: Database["public"]["Enums"]["experience_level"] | null
+          headline: string | null
+          id: string
+          is_approved: boolean
+          is_featured: boolean
+          is_verified: boolean
+          response_hours: number
+          updated_at: string
+          user_id: string
+          verification_requested_at: string | null
+          view_count: number
+        }
+        Insert: {
+          about?: string | null
+          availability?: Database["public"]["Enums"]["availability_status"]
+          created_at?: string
+          experience?: Database["public"]["Enums"]["experience_level"] | null
+          headline?: string | null
+          id?: string
+          is_approved?: boolean
+          is_featured?: boolean
+          is_verified?: boolean
+          response_hours?: number
+          updated_at?: string
+          user_id: string
+          verification_requested_at?: string | null
+          view_count?: number
+        }
+        Update: {
+          about?: string | null
+          availability?: Database["public"]["Enums"]["availability_status"]
+          created_at?: string
+          experience?: Database["public"]["Enums"]["experience_level"] | null
+          headline?: string | null
+          id?: string
+          is_approved?: boolean
+          is_featured?: boolean
+          is_verified?: boolean
+          response_hours?: number
+          updated_at?: string
+          user_id?: string
+          verification_requested_at?: string | null
+          view_count?: number
+        }
+        Relationships: []
+      }
+      portfolios: {
+        Row: {
+          category_id: string | null
+          cover_image: string | null
+          created_at: string
+          creator_id: string
+          description: string | null
+          id: string
+          is_approved: boolean
+          is_featured: boolean
+          project_url: string | null
+          software: string[]
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          category_id?: string | null
+          cover_image?: string | null
+          created_at?: string
+          creator_id: string
+          description?: string | null
+          id?: string
+          is_approved?: boolean
+          is_featured?: boolean
+          project_url?: string | null
+          software?: string[]
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          category_id?: string | null
+          cover_image?: string | null
+          created_at?: string
+          creator_id?: string
+          description?: string | null
+          id?: string
+          is_approved?: boolean
+          is_featured?: boolean
+          project_url?: string | null
+          software?: string[]
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolios_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolios_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string
+          id: string
+          is_suspended: boolean
+          kind: Database["public"]["Enums"]["user_kind"]
+          languages: string[]
+          location: string | null
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name: string
+          id: string
+          is_suspended?: boolean
+          kind?: Database["public"]["Enums"]["user_kind"]
+          languages?: string[]
+          location?: string | null
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_suspended?: boolean
+          kind?: Database["public"]["Enums"]["user_kind"]
+          languages?: string[]
+          location?: string | null
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          details: string | null
+          id: string
+          reason: string
+          reporter_id: string
+          status: Database["public"]["Enums"]["report_status"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["report_target"]
+        }
+        Insert: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason: string
+          reporter_id: string
+          status?: Database["public"]["Enums"]["report_status"]
+          target_id: string
+          target_type: Database["public"]["Enums"]["report_target"]
+        }
+        Update: {
+          created_at?: string
+          details?: string | null
+          id?: string
+          reason?: string
+          reporter_id?: string
+          status?: Database["public"]["Enums"]["report_status"]
+          target_id?: string
+          target_type?: Database["public"]["Enums"]["report_target"]
+        }
+        Relationships: []
+      }
+      saved_creators: {
+        Row: {
+          client_id: string
+          created_at: string
+          creator_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          creator_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          creator_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_creators_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      availability_status: "available" | "limited" | "booked" | "vacation"
+      experience_level: "entry" | "intermediate" | "expert"
+      report_status: "open" | "reviewing" | "resolved" | "dismissed"
+      report_target: "creator" | "client" | "job" | "portfolio" | "message"
+      user_kind: "client" | "creator"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +473,13 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      availability_status: ["available", "limited", "booked", "vacation"],
+      experience_level: ["entry", "intermediate", "expert"],
+      report_status: ["open", "reviewing", "resolved", "dismissed"],
+      report_target: ["creator", "client", "job", "portfolio", "message"],
+      user_kind: ["client", "creator"],
+    },
   },
 } as const
