@@ -35,13 +35,13 @@ function AuthPage() {
           options: { emailRedirectTo: window.location.origin, data: { display_name: displayName } },
         });
         if (error) throw error;
-        toast.success("Account created! Check your email to confirm.");
-        navigate({ to: "/" });
+        toast.success("Account created");
+        navigate({ to: "/onboarding" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("Welcome back");
-        navigate({ to: "/" });
+        navigate({ to: "/dashboard" });
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
@@ -59,7 +59,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/" });
+    navigate({ to: "/dashboard" });
   }
 
   return (
