@@ -1,7 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { z } from "zod";
-import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const search = z.object({ mode: fallback(z.enum(["signin", "signup"]), "signin").default("signin") });
-
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — CRE8IVE" }, { name: "description", content: "Join the CRE8IVE creative marketplace." }] }),
-  validateSearch: zodValidator(search),
+  validateSearch: (s: Record<string, unknown>): { mode: "signin" | "signup" } => ({
+    mode: s.mode === "signup" ? "signup" : "signin",
+  }),
   component: AuthPage,
 });
 
