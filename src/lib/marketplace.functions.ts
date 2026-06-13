@@ -4,7 +4,7 @@ import { z } from "zod";
 const browseSchema = z.object({
   q: z.string().optional(),
   category: z.string().optional(),
-  availability: z.enum(["available", "limited", "busy"]).optional(),
+  availability: z.enum(["available", "limited", "booked", "vacation"]).optional(),
   page: z.number().int().min(1).default(1),
 });
 
@@ -81,9 +81,10 @@ export const getCreatorByUsername = createServerFn({ method: "GET" })
         .order("is_featured", { ascending: false })
         .order("created_at", { ascending: false });
       portfolios = items ?? [];
-      // Best-effort view counter; ignore errors.
-      await supabaseAdmin.rpc("noop").catch(() => {});
-      await supabaseAdmin.from("creators").update({ view_count: (creator.view_count ?? 0) + 1 }).eq("id", creator.id);
+      await supabaseAdmin
+        .from("creators")
+        .update({ view_count: (creator.view_count ?? 0) + 1 })
+        .eq("id", creator.id);
     }
     return { profile, creator, portfolios };
   });

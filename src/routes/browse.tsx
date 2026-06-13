@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { browseCreators, listCategories } from "@/lib/marketplace.functions";
 
-type Search = { q?: string; category?: string; availability?: "available" | "limited" | "busy"; page?: number };
+type Search = { q?: string; category?: string; availability?: "available" | "limited" | "booked" | "vacation"; page?: number };
 
 export const Route = createFileRoute("/browse")({
   head: () => ({
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/browse")({
     q: typeof s.q === "string" ? s.q : undefined,
     category: typeof s.category === "string" ? s.category : undefined,
     availability:
-      s.availability === "available" || s.availability === "limited" || s.availability === "busy"
+      s.availability === "available" || s.availability === "limited" || s.availability === "booked" || s.availability === "vacation"
         ? s.availability
         : undefined,
     page: typeof s.page === "number" ? s.page : 1,
@@ -100,7 +100,7 @@ function BrowsePage() {
             </Button>
           ))}
           <div className="mx-2 h-5 w-px bg-border" />
-          {(["available", "limited", "busy"] as const).map((a) => (
+          {(["available", "limited", "booked", "vacation"] as const).map((a) => (
             <Button
               key={a}
               size="sm"
