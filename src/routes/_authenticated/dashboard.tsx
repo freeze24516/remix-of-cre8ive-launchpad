@@ -8,10 +8,10 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 const nav = [
-  { to: "/dashboard", label: "Overview", Icon: LayoutDashboard, exact: true },
-  { to: "/dashboard/profile", label: "Account", Icon: User },
-  { to: "/dashboard/creator", label: "Creator profile", Icon: Palette },
-  { to: "/dashboard/portfolio", label: "Portfolio", Icon: FolderKanban },
+  { to: "/dashboard", label: "Overview", Icon: LayoutDashboard, exact: true as boolean },
+  { to: "/dashboard/profile", label: "Account", Icon: User, exact: false as boolean },
+  { to: "/dashboard/creator", label: "Creator profile", Icon: Palette, exact: false as boolean },
+  { to: "/dashboard/portfolio", label: "Portfolio", Icon: FolderKanban, exact: false as boolean },
 ] as const;
 
 function DashboardLayout() {
