@@ -18,7 +18,7 @@ export const listJobs = createServerFn({ method: "GET" })
     let q = supabaseAdmin
       .from("jobs")
       .select(
-        "id, title, description, budget_min, budget_max, currency, deadline, location, remote_ok, skills, status, created_at, category:categories(id, slug, name), client:profiles!jobs_client_id_fkey(id, username, display_name, avatar_url)",
+        "id, client_id, title, description, budget_min, budget_max, currency, deadline, location, remote_ok, skills, status, created_at, category:categories(id, slug, name)",
         { count: "exact" },
       )
       .eq("status", "open")
@@ -30,7 +30,17 @@ export const listJobs = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     let filtered = rows ?? [];
     if (data.category) filtered = filtered.filter((j: any) => j.category?.slug === data.category);
-    return { jobs: filtered, total: count ?? 0, page: data.page, pageSize };
+    const clientIds = Array.from(new Set(filtered.map((j: any) => j.client_id)));
+    let clientsById: Record<string, any> = {};
+    if (clientIds.length) {
+      const { data: clients } = await supabaseAdmin
+        .from("profiles")
+        .select("id, username, display_name, avatar_url")
+        .in("id", clientIds);
+      clientsById = Object.fromEntries((clients ?? []).map((c: any) => [c.id, c]));
+    }
+    const jobs = filtered.map((j: any) => ({ ...j, client: clientsById[j.client_id] ?? null }));
+    return { jobs, total: count ?? 0, page: data.page, pageSize };
   });
 
 export const getJob = createServerFn({ method: "GET" })
@@ -40,12 +50,18 @@ export const getJob = createServerFn({ method: "GET" })
     const { data: job, error } = await supabaseAdmin
       .from("jobs")
       .select(
-        "id, client_id, title, description, budget_min, budget_max, currency, deadline, location, remote_ok, skills, status, created_at, category:categories(id, slug, name), client:profiles!jobs_client_id_fkey(id, username, display_name, avatar_url, bio)",
+        "id, client_id, title, description, budget_min, budget_max, currency, deadline, location, remote_ok, skills, status, created_at, category:categories(id, slug, name)",
       )
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    return job;
+    if (!job) return null;
+    const { data: client } = await supabaseAdmin
+      .from("profiles")
+      .select("id, username, display_name, avatar_url, bio")
+      .eq("id", job.client_id)
+      .maybeSingle();
+    return { ...job, client };
   });
 
 const createJobSchema = z.object({
@@ -107,12 +123,22 @@ export const jobApplications = createServerFn({ method: "GET" })
     const { data: apps, error } = await context.supabase
       .from("job_applications")
       .select(
-        "id, pitch, quoted_rate, currency, status, created_at, creator:profiles!job_applications_creator_id_fkey(id, username, display_name, avatar_url)",
+        "id, creator_id, pitch, quoted_rate, currency, status, created_at",
       )
       .eq("job_id", data.jobId)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);
-    return { job, applications: apps ?? [] };
+    const ids = Array.from(new Set((apps ?? []).map((a: any) => a.creator_id)));
+    let byId: Record<string, any> = {};
+    if (ids.length) {
+      const { data: ps } = await context.supabase
+        .from("profiles")
+        .select("id, username, display_name, avatar_url")
+        .in("id", ids);
+      byId = Object.fromEntries((ps ?? []).map((p: any) => [p.id, p]));
+    }
+    const applications = (apps ?? []).map((a: any) => ({ ...a, creator: byId[a.creator_id] ?? null }));
+    return { job, applications };
   });
 
 export const applyToJob = createServerFn({ method: "POST" })
@@ -142,7 +168,7 @@ export const myApplications = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("job_applications")
-      .select("id, pitch, quoted_rate, currency, status, created_at, job:jobs!job_applications_job_id_fkey(id, title, status)")
+      .select("id, pitch, quoted_rate, currency, status, created_at, job:jobs(id, title, status)")
       .eq("creator_id", context.userId)
       .order("created_at", { ascending: false });
     if (error) throw new Error(error.message);

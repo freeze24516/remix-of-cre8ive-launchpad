@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UUsernameRouteImport } from './routes/u.$username'
+import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
@@ -50,6 +51,11 @@ const UUsernameRoute = UUsernameRouteImport.update({
   id: '/u/$username',
   path: '/u/$username',
   getParentRoute: () => rootRouteImport,
+} as any)
+const JobsJobIdRoute = JobsJobIdRouteImport.update({
+  id: '/$jobId',
+  path: '/$jobId',
+  getParentRoute: () => JobsRoute,
 } as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
@@ -90,9 +96,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
-  '/jobs': typeof JobsRoute
+  '/jobs': typeof JobsRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -103,8 +110,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
-  '/jobs': typeof JobsRoute
+  '/jobs': typeof JobsRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -117,9 +125,10 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
-  '/jobs': typeof JobsRoute
+  '/jobs': typeof JobsRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
   '/_authenticated/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/_authenticated/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/dashboard'
     | '/onboarding'
+    | '/jobs/$jobId'
     | '/u/$username'
     | '/dashboard/creator'
     | '/dashboard/portfolio'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/browse'
     | '/jobs'
     | '/onboarding'
+    | '/jobs/$jobId'
     | '/u/$username'
     | '/dashboard/creator'
     | '/dashboard/portfolio'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/jobs'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
+    | '/jobs/$jobId'
     | '/u/$username'
     | '/_authenticated/dashboard/creator'
     | '/_authenticated/dashboard/portfolio'
@@ -173,7 +185,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BrowseRoute: typeof BrowseRoute
-  JobsRoute: typeof JobsRoute
+  JobsRoute: typeof JobsRouteWithChildren
   UUsernameRoute: typeof UUsernameRoute
 }
 
@@ -220,6 +232,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/u/$username'
       preLoaderRoute: typeof UUsernameRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/jobs/$jobId': {
+      id: '/jobs/$jobId'
+      path: '/$jobId'
+      fullPath: '/jobs/$jobId'
+      preLoaderRoute: typeof JobsJobIdRouteImport
+      parentRoute: typeof JobsRoute
     }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
@@ -299,12 +318,22 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface JobsRouteChildren {
+  JobsJobIdRoute: typeof JobsJobIdRoute
+}
+
+const JobsRouteChildren: JobsRouteChildren = {
+  JobsJobIdRoute: JobsJobIdRoute,
+}
+
+const JobsRouteWithChildren = JobsRoute._addFileChildren(JobsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BrowseRoute: BrowseRoute,
-  JobsRoute: JobsRoute,
+  JobsRoute: JobsRouteWithChildren,
   UUsernameRoute: UUsernameRoute,
 }
 export const routeTree = rootRouteImport
