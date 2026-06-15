@@ -23,6 +23,7 @@ import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_aut
 import { Route as AuthenticatedDashboardPortfolioRouteImport } from './routes/_authenticated/dashboard.portfolio'
 import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard.jobs'
 import { Route as AuthenticatedDashboardCreatorRouteImport } from './routes/_authenticated/dashboard.creator'
+import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard.applications'
 import { Route as AuthenticatedDashboardJobsNewRouteImport } from './routes/_authenticated/dashboard.jobs.new'
 import { Route as AuthenticatedDashboardJobsJobIdRouteImport } from './routes/_authenticated/dashboard.jobs.$jobId'
 
@@ -100,6 +101,12 @@ const AuthenticatedDashboardCreatorRoute =
     path: '/creator',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardApplicationsRoute =
+  AuthenticatedDashboardApplicationsRouteImport.update({
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardJobsNewRoute =
   AuthenticatedDashboardJobsNewRouteImport.update({
     id: '/new',
@@ -122,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
+  '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -138,6 +146,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
+  '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -157,6 +166,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
+  '/_authenticated/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/_authenticated/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/_authenticated/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
   '/_authenticated/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/jobs/$jobId'
     | '/u/$username'
+    | '/dashboard/applications'
     | '/dashboard/creator'
     | '/dashboard/jobs'
     | '/dashboard/portfolio'
@@ -192,6 +203,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/jobs/$jobId'
     | '/u/$username'
+    | '/dashboard/applications'
     | '/dashboard/creator'
     | '/dashboard/jobs'
     | '/dashboard/portfolio'
@@ -210,6 +222,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/jobs/$jobId'
     | '/u/$username'
+    | '/_authenticated/dashboard/applications'
     | '/_authenticated/dashboard/creator'
     | '/_authenticated/dashboard/jobs'
     | '/_authenticated/dashboard/portfolio'
@@ -328,6 +341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardCreatorRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/applications': {
+      id: '/_authenticated/dashboard/applications'
+      path: '/applications'
+      fullPath: '/dashboard/applications'
+      preLoaderRoute: typeof AuthenticatedDashboardApplicationsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/jobs/new': {
       id: '/_authenticated/dashboard/jobs/new'
       path: '/new'
@@ -362,6 +382,7 @@ const AuthenticatedDashboardJobsRouteWithChildren =
   )
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
   AuthenticatedDashboardCreatorRoute: typeof AuthenticatedDashboardCreatorRoute
   AuthenticatedDashboardJobsRoute: typeof AuthenticatedDashboardJobsRouteWithChildren
   AuthenticatedDashboardPortfolioRoute: typeof AuthenticatedDashboardPortfolioRoute
@@ -371,6 +392,8 @@ interface AuthenticatedDashboardRouteChildren {
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardApplicationsRoute:
+      AuthenticatedDashboardApplicationsRoute,
     AuthenticatedDashboardCreatorRoute: AuthenticatedDashboardCreatorRoute,
     AuthenticatedDashboardJobsRoute:
       AuthenticatedDashboardJobsRouteWithChildren,
