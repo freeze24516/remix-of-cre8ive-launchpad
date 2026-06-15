@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth, signOut } from "@/hooks/use-auth";
+import { NotificationsBell } from "@/components/layout/notifications-bell";
 
 export function SiteHeader() {
   const { user, loading } = useAuth();
@@ -16,12 +17,14 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
           <Link to="/browse" className="transition-colors hover:text-foreground">Browse creators</Link>
+          <Link to="/jobs" className="transition-colors hover:text-foreground">Jobs</Link>
           <a href="#categories" className="transition-colors hover:text-foreground">Categories</a>
           <a href="#how" className="transition-colors hover:text-foreground">How it works</a>
         </nav>
         <div className="flex items-center gap-2">
           {loading ? null : user ? (
             <>
+              <NotificationsBell />
               <Button asChild variant="ghost" size="sm"><Link to="/dashboard">Dashboard</Link></Button>
               <Button size="sm" variant="outline" onClick={() => signOut()}>Sign out</Button>
             </>
