@@ -24,6 +24,7 @@ import { Route as AuthenticatedDashboardPortfolioRouteImport } from './routes/_a
 import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard.jobs'
 import { Route as AuthenticatedDashboardCreatorRouteImport } from './routes/_authenticated/dashboard.creator'
 import { Route as AuthenticatedDashboardJobsNewRouteImport } from './routes/_authenticated/dashboard.jobs.new'
+import { Route as AuthenticatedDashboardJobsJobIdRouteImport } from './routes/_authenticated/dashboard.jobs.$jobId'
 
 const JobsRoute = JobsRouteImport.update({
   id: '/jobs',
@@ -105,6 +106,12 @@ const AuthenticatedDashboardJobsNewRoute =
     path: '/new',
     getParentRoute: () => AuthenticatedDashboardJobsRoute,
   } as any)
+const AuthenticatedDashboardJobsJobIdRoute =
+  AuthenticatedDashboardJobsJobIdRouteImport.update({
+    id: '/$jobId',
+    path: '/$jobId',
+    getParentRoute: () => AuthenticatedDashboardJobsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
   '/dashboard/jobs/new': typeof AuthenticatedDashboardJobsNewRoute
 }
 export interface FileRoutesByTo {
@@ -135,6 +143,7 @@ export interface FileRoutesByTo {
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
   '/dashboard/jobs/new': typeof AuthenticatedDashboardJobsNewRoute
 }
 export interface FileRoutesById {
@@ -153,6 +162,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
   '/_authenticated/dashboard/jobs/new': typeof AuthenticatedDashboardJobsNewRoute
 }
 export interface FileRouteTypes {
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/dashboard/portfolio'
     | '/dashboard/profile'
     | '/dashboard/'
+    | '/dashboard/jobs/$jobId'
     | '/dashboard/jobs/new'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/dashboard/portfolio'
     | '/dashboard/profile'
     | '/dashboard'
+    | '/dashboard/jobs/$jobId'
     | '/dashboard/jobs/new'
   id:
     | '__root__'
@@ -203,6 +215,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/portfolio'
     | '/_authenticated/dashboard/profile'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/dashboard/jobs/$jobId'
     | '/_authenticated/dashboard/jobs/new'
   fileRoutesById: FileRoutesById
 }
@@ -322,15 +335,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardJobsNewRouteImport
       parentRoute: typeof AuthenticatedDashboardJobsRoute
     }
+    '/_authenticated/dashboard/jobs/$jobId': {
+      id: '/_authenticated/dashboard/jobs/$jobId'
+      path: '/$jobId'
+      fullPath: '/dashboard/jobs/$jobId'
+      preLoaderRoute: typeof AuthenticatedDashboardJobsJobIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardJobsRoute
+    }
   }
 }
 
 interface AuthenticatedDashboardJobsRouteChildren {
+  AuthenticatedDashboardJobsJobIdRoute: typeof AuthenticatedDashboardJobsJobIdRoute
   AuthenticatedDashboardJobsNewRoute: typeof AuthenticatedDashboardJobsNewRoute
 }
 
 const AuthenticatedDashboardJobsRouteChildren: AuthenticatedDashboardJobsRouteChildren =
   {
+    AuthenticatedDashboardJobsJobIdRoute: AuthenticatedDashboardJobsJobIdRoute,
     AuthenticatedDashboardJobsNewRoute: AuthenticatedDashboardJobsNewRoute,
   }
 
