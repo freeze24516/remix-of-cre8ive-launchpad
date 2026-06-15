@@ -1,11 +1,15 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 import { ShieldCheck, MapPin, Clock, Sparkles, ExternalLink } from "lucide-react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getCreatorByUsername } from "@/lib/marketplace.functions";
+import { startConversation } from "@/lib/messaging.functions";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/u/$username")({
   loader: async ({ context, params }) => {
@@ -45,12 +49,20 @@ export const Route = createFileRoute("/u/$username")({
 
 function CreatorPage() {
   const params = Route.useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { data } = useSuspenseQuery({
     queryKey: ["creator", params.username],
     queryFn: () => getCreatorByUsername({ data: { username: params.username } }),
   });
   if (!data) return null;
   const { profile, creator, portfolios } = data;
+  const startConvFn = useServerFn(startConversation);
+  const dm = useMutation({
+    mutationFn: () => startConvFn({ data: { otherUserId: profile.id } }),
+    onSuccess: (r) => navigate({ to: "/dashboard/messages", search: { c: r.id } }),
+    onError: (e: any) => toast.error(e.message ?? "Failed"),
+  });
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -142,8 +154,13 @@ function CreatorPage() {
                   </div>
                 </div>
               )}
-              <Button className="w-full bg-[image:var(--gradient-primary)]">Contact creator</Button>
-              <p className="text-center text-xs text-muted-foreground">Messaging launches in a later phase.</p>
+              {user && user.id !== profile.id ? (
+                <Button className="w-full bg-[image:var(--gradient-primary)]" onClick={() => dm.mutate()} disabled={dm.isPending}>
+                  {dm.isPending ? "Opening…" : "Contact creator"}
+                </Button>
+              ) : !user ? (
+                <Button asChild className="w-full bg-[image:var(--gradient-primary)]"><Link to="/auth" search={{ mode: "signup" }}>Sign in to contact</Link></Button>
+              ) : null}
             </aside>
           </div>
         )}
