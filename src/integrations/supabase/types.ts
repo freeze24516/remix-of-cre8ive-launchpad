@@ -38,6 +38,30 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string
+          user_a: string
+          user_b: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          user_a: string
+          user_b: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string
+          user_a?: string
+          user_b?: string
+        }
+        Relationships: []
+      }
       creator_categories: {
         Row: {
           category_id: string
@@ -139,6 +163,183 @@ export type Database = {
           user_id?: string
           verification_requested_at?: string | null
           view_count?: number
+        }
+        Relationships: []
+      }
+      job_applications: {
+        Row: {
+          created_at: string
+          creator_id: string
+          currency: string
+          id: string
+          job_id: string
+          pitch: string
+          quoted_rate: number | null
+          status: Database["public"]["Enums"]["application_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          currency?: string
+          id?: string
+          job_id: string
+          pitch: string
+          quoted_rate?: number | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          currency?: string
+          id?: string
+          job_id?: string
+          pitch?: string
+          quoted_rate?: number | null
+          status?: Database["public"]["Enums"]["application_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          budget_max: number | null
+          budget_min: number | null
+          category_id: string | null
+          client_id: string
+          created_at: string
+          currency: string
+          deadline: string | null
+          description: string
+          id: string
+          location: string | null
+          remote_ok: boolean
+          skills: string[]
+          status: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          budget_max?: number | null
+          budget_min?: number | null
+          category_id?: string | null
+          client_id: string
+          created_at?: string
+          currency?: string
+          deadline?: string | null
+          description: string
+          id?: string
+          location?: string | null
+          remote_ok?: boolean
+          skills?: string[]
+          status?: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          budget_max?: number | null
+          budget_min?: number | null
+          category_id?: string | null
+          client_id?: string
+          created_at?: string
+          currency?: string
+          deadline?: string | null
+          description?: string
+          id?: string
+          location?: string | null
+          remote_ok?: boolean
+          skills?: string[]
+          status?: Database["public"]["Enums"]["job_status"]
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          read_at: string | null
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          kind: string
+          link: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -332,6 +533,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_or_create_conversation: { Args: { _other: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -342,8 +544,15 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      application_status:
+        | "pending"
+        | "shortlisted"
+        | "accepted"
+        | "rejected"
+        | "withdrawn"
       availability_status: "available" | "limited" | "booked" | "vacation"
       experience_level: "entry" | "intermediate" | "expert"
+      job_status: "draft" | "open" | "in_review" | "closed" | "filled"
       report_status: "open" | "reviewing" | "resolved" | "dismissed"
       report_target: "creator" | "client" | "job" | "portfolio" | "message"
       user_kind: "client" | "creator"
@@ -475,8 +684,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      application_status: [
+        "pending",
+        "shortlisted",
+        "accepted",
+        "rejected",
+        "withdrawn",
+      ],
       availability_status: ["available", "limited", "booked", "vacation"],
       experience_level: ["entry", "intermediate", "expert"],
+      job_status: ["draft", "open", "in_review", "closed", "filled"],
       report_status: ["open", "reviewing", "resolved", "dismissed"],
       report_target: ["creator", "client", "job", "portfolio", "message"],
       user_kind: ["client", "creator"],
