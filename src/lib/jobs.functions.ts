@@ -45,7 +45,6 @@ export const getJob = createServerFn({ method: "GET" })
       .eq("id", data.id)
       .maybeSingle();
     if (error) throw new Error(error.message);
-    if (job) await supabaseAdmin.from("jobs").update({ view_count: undefined }).eq("id", job.id); // no-op safe
     return job;
   });
 
