@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Shield, Flag, BadgeCheck, FolderKanban, Users } from "lucide-react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getMyStaffRoles } from "@/lib/admin.functions";
@@ -18,8 +18,17 @@ const nav = [
 ] as const;
 
 function AdminLayout() {
-  const { data: roles } = useSuspenseQuery({ queryKey: ["my-staff-roles"], queryFn: () => getMyStaffRoles() });
+  const { data: roles, isLoading } = useQuery({ queryKey: ["my-staff-roles"], queryFn: () => getMyStaffRoles() });
   const { pathname } = useLocation();
+
+  if (isLoading || !roles) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <SiteHeader />
+        <div className="grid flex-1 place-items-center text-muted-foreground">Loading…</div>
+      </div>
+    );
+  }
 
   if (!roles.isAdmin && !roles.isModerator) {
     return (
