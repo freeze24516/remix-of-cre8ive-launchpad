@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { getCreatorByUsername } from "@/lib/marketplace.functions";
 import { startConversation } from "@/lib/messaging.functions";
 import { useAuth } from "@/hooks/use-auth";
+import { ReportDialog } from "@/components/report-dialog";
 
 export const Route = createFileRoute("/u/$username")({
   loader: async ({ context, params }) => {
@@ -161,6 +162,11 @@ function CreatorPage() {
               ) : !user ? (
                 <Button asChild className="w-full bg-[image:var(--gradient-primary)]"><Link to="/auth" search={{ mode: "signup" }}>Sign in to contact</Link></Button>
               ) : null}
+              {user && user.id !== profile.id && creator && (
+                <div className="flex justify-center">
+                  <ReportDialog targetType="creator" targetId={creator.id} />
+                </div>
+              )}
             </aside>
           </div>
         )}
