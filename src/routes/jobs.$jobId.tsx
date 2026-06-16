@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { getJob, applyToJob } from "@/lib/jobs.functions";
 import { startConversation } from "@/lib/messaging.functions";
 import { useAuth } from "@/hooks/use-auth";
+import { ReportDialog } from "@/components/report-dialog";
 
 export const Route = createFileRoute("/jobs/$jobId")({
   loader: async ({ context, params }) => {
@@ -95,6 +96,9 @@ function JobDetail() {
             </div>
             {user && user.id !== job.client_id && (
               <Button variant="outline" size="sm" onClick={() => dm.mutate()} disabled={dm.isPending}>Message client</Button>
+            )}
+            {user && user.id !== job.client_id && (
+              <ReportDialog targetType="job" targetId={job.id} />
             )}
           </div>
         </div>
