@@ -28,6 +28,7 @@ import { Route as AuthenticatedDashboardMessagesRouteImport } from './routes/_au
 import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard.jobs'
 import { Route as AuthenticatedDashboardCreatorRouteImport } from './routes/_authenticated/dashboard.creator'
 import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard.applications'
+import { Route as AuthenticatedAdminVerificationsRouteImport } from './routes/_authenticated/admin.verifications'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedDashboardJobsNewRouteImport } from './routes/_authenticated/dashboard.jobs.new'
 import { Route as AuthenticatedDashboardJobsJobIdRouteImport } from './routes/_authenticated/dashboard.jobs.$jobId'
@@ -134,6 +135,12 @@ const AuthenticatedDashboardApplicationsRoute =
     path: '/applications',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedAdminVerificationsRoute =
+  AuthenticatedAdminVerificationsRouteImport.update({
+    id: '/verifications',
+    path: '/verifications',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminReportsRoute =
   AuthenticatedAdminReportsRouteImport.update({
     id: '/reports',
@@ -164,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
@@ -185,6 +193,7 @@ export interface FileRoutesByTo {
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
@@ -210,6 +219,7 @@ export interface FileRoutesById {
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/_authenticated/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/_authenticated/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/_authenticated/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/_authenticated/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId'
     | '/u/$username'
     | '/admin/reports'
+    | '/admin/verifications'
     | '/dashboard/applications'
     | '/dashboard/creator'
     | '/dashboard/jobs'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId'
     | '/u/$username'
     | '/admin/reports'
+    | '/admin/verifications'
     | '/dashboard/applications'
     | '/dashboard/creator'
     | '/dashboard/jobs'
@@ -280,6 +292,7 @@ export interface FileRouteTypes {
     | '/jobs/$jobId'
     | '/u/$username'
     | '/_authenticated/admin/reports'
+    | '/_authenticated/admin/verifications'
     | '/_authenticated/dashboard/applications'
     | '/_authenticated/dashboard/creator'
     | '/_authenticated/dashboard/jobs'
@@ -437,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardApplicationsRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/admin/verifications': {
+      id: '/_authenticated/admin/verifications'
+      path: '/verifications'
+      fullPath: '/admin/verifications'
+      preLoaderRoute: typeof AuthenticatedAdminVerificationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/reports': {
       id: '/_authenticated/admin/reports'
       path: '/reports'
@@ -463,11 +483,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
+  AuthenticatedAdminVerificationsRoute: typeof AuthenticatedAdminVerificationsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
+  AuthenticatedAdminVerificationsRoute: AuthenticatedAdminVerificationsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
