@@ -30,6 +30,7 @@ import { Route as AuthenticatedDashboardCreatorRouteImport } from './routes/_aut
 import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard.applications'
 import { Route as AuthenticatedAdminVerificationsRouteImport } from './routes/_authenticated/admin.verifications'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
+import { Route as AuthenticatedAdminPortfoliosRouteImport } from './routes/_authenticated/admin.portfolios'
 import { Route as AuthenticatedDashboardJobsNewRouteImport } from './routes/_authenticated/dashboard.jobs.new'
 import { Route as AuthenticatedDashboardJobsJobIdRouteImport } from './routes/_authenticated/dashboard.jobs.$jobId'
 
@@ -147,6 +148,12 @@ const AuthenticatedAdminReportsRoute =
     path: '/reports',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPortfoliosRoute =
+  AuthenticatedAdminPortfoliosRouteImport.update({
+    id: '/portfolios',
+    path: '/portfolios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedDashboardJobsNewRoute =
   AuthenticatedDashboardJobsNewRouteImport.update({
     id: '/new',
@@ -170,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
+  '/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
@@ -192,6 +200,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
+  '/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
@@ -218,6 +227,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
   '/u/$username': typeof UUsernameRoute
+  '/_authenticated/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/_authenticated/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/jobs/$jobId'
     | '/u/$username'
+    | '/admin/portfolios'
     | '/admin/reports'
     | '/admin/verifications'
     | '/dashboard/applications'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/jobs/$jobId'
     | '/u/$username'
+    | '/admin/portfolios'
     | '/admin/reports'
     | '/admin/verifications'
     | '/dashboard/applications'
@@ -291,6 +303,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/jobs/$jobId'
     | '/u/$username'
+    | '/_authenticated/admin/portfolios'
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/verifications'
     | '/_authenticated/dashboard/applications'
@@ -464,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/portfolios': {
+      id: '/_authenticated/admin/portfolios'
+      path: '/portfolios'
+      fullPath: '/admin/portfolios'
+      preLoaderRoute: typeof AuthenticatedAdminPortfoliosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/dashboard/jobs/new': {
       id: '/_authenticated/dashboard/jobs/new'
       path: '/new'
@@ -482,12 +502,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminPortfoliosRoute: typeof AuthenticatedAdminPortfoliosRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
   AuthenticatedAdminVerificationsRoute: typeof AuthenticatedAdminVerificationsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminPortfoliosRoute: AuthenticatedAdminPortfoliosRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
   AuthenticatedAdminVerificationsRoute: AuthenticatedAdminVerificationsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
