@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getAdminStats } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
@@ -7,7 +7,8 @@ export const Route = createFileRoute("/_authenticated/admin/")({
 });
 
 function AdminOverview() {
-  const { data } = useSuspenseQuery({ queryKey: ["admin-stats"], queryFn: () => getAdminStats() });
+  const { data, isLoading } = useQuery({ queryKey: ["admin-stats"], queryFn: () => getAdminStats() });
+  if (isLoading || !data) return <div className="text-muted-foreground">Loading…</div>;
   const cards = [
     { label: "Total users", value: data.users, to: "/admin/users" as const },
     { label: "Creators", value: data.creators, to: "/admin/users" as const },
