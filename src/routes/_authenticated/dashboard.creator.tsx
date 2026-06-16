@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { X, ShieldCheck } from "lucide-react";
+import { requestVerification } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/dashboard/creator")({
   component: CreatorEditPage,
@@ -47,6 +48,12 @@ function CreatorEditPage() {
   const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const verifyReq = useMutation({
+    mutationFn: () => requestVerification(),
+    onSuccess: () => { toast.success("Verification requested"); qc.invalidateQueries({ queryKey: ["my-creator"] }); },
+    onError: (e: any) => toast.error(e.message ?? "Failed"),
+  });
 
   useEffect(() => {
     if (data?.creator) {
@@ -91,12 +98,34 @@ function CreatorEditPage() {
   if (!data) return <div className="text-muted-foreground">Loading…</div>;
   if (!data.creator) return <div className="rounded-xl border border-dashed border-border p-6 text-muted-foreground">Set your role to “creator” in onboarding first.</div>;
 
+  const c = data.creator;
+  const verifBlock = c.is_verified ? (
+    <div className="flex items-center gap-2 rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm">
+      <ShieldCheck className="h-5 w-5 text-accent" />
+      <span>You're a verified creator.</span>
+    </div>
+  ) : c.verification_requested_at ? (
+    <div className="rounded-xl border border-border/70 bg-card p-4 text-sm text-muted-foreground">
+      Verification requested on {new Date(c.verification_requested_at).toLocaleDateString()} — under review.
+    </div>
+  ) : (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-border/70 bg-card p-4">
+      <div className="text-sm">
+        <div className="font-medium">Request verification</div>
+        <div className="text-muted-foreground">Stand out with a verified badge after our team reviews your portfolio.</div>
+      </div>
+      <Button size="sm" variant="outline" onClick={() => verifyReq.mutate()} disabled={verifyReq.isPending}>Request</Button>
+    </div>
+  );
+
   return (
     <div className="max-w-2xl space-y-6">
       <div>
         <h1 className="font-display text-2xl font-bold">Creator profile</h1>
         <p className="text-sm text-muted-foreground">How clients discover and evaluate you.</p>
       </div>
+
+      {verifBlock}
 
       <div className="space-y-1.5">
         <Label>Headline</Label>
