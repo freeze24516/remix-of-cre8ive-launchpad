@@ -25,7 +25,11 @@ export const Route = createFileRoute("/u/$username")({
       queryFn: () => getCreatorByUsername({ data: { username: params.username } }),
     });
     if (!data) throw notFound();
-    return data;
+    const summaries = await context.queryClient.ensureQueryData({
+      queryKey: ["review-summary", data.profile.id],
+      queryFn: () => reviewSummaries({ data: { userIds: [data.profile.id] } }),
+    });
+    return { ...data, summary: summaries[data.profile.id] ?? { average: 0, count: 0 } };
   },
   head: ({ loaderData, params }) => {
     const p = loaderData?.profile;
@@ -58,6 +62,16 @@ export const Route = createFileRoute("/u/$username")({
                 jobTitle: c?.headline ?? undefined,
                 address: p.location ?? undefined,
                 url: path,
+                aggregateRating:
+                  loaderData?.summary && loaderData.summary.count > 0
+                    ? {
+                        "@type": "AggregateRating",
+                        ratingValue: loaderData.summary.average,
+                        reviewCount: loaderData.summary.count,
+                        bestRating: 5,
+                        worstRating: 1,
+                      }
+                    : undefined,
               }),
             },
           ]
