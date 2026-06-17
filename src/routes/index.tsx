@@ -12,7 +12,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "A curated marketplace of video editors, motion designers, photographers, illustrators and 3D artists." },
       { property: "og:title", content: "CRE8IVE — Hire the world's best creative talent" },
       { property: "og:description", content: "A curated marketplace of video editors, motion designers, photographers and illustrators." },
+      { property: "og:url", content: "/" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Index,
 });

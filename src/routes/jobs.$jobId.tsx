@@ -22,9 +22,52 @@ export const Route = createFileRoute("/jobs/$jobId")({
     if (!job) throw notFound();
     return job;
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const title = loaderData ? `${loaderData.title} — CRE8IVE` : "Job — CRE8IVE";
-    return { meta: [{ title }, { name: "description", content: (loaderData?.description ?? "").slice(0, 160) }] };
+    const desc = (loaderData?.description ?? "").slice(0, 160);
+    const path = `/jobs/${params.jobId}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: path },
+      ],
+      links: [{ rel: "canonical", href: path }],
+      scripts: loaderData
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "JobPosting",
+                title: loaderData.title,
+                description: loaderData.description,
+                datePosted: loaderData.created_at,
+                validThrough: loaderData.deadline ?? undefined,
+                employmentType: loaderData.remote_ok ? "CONTRACTOR" : undefined,
+                jobLocationType: loaderData.remote_ok ? "TELECOMMUTE" : undefined,
+                hiringOrganization: { "@type": "Organization", name: "CRE8IVE Client" },
+                baseSalary:
+                  loaderData.budget_min || loaderData.budget_max
+                    ? {
+                        "@type": "MonetaryAmount",
+                        currency: loaderData.currency ?? "USD",
+                        value: {
+                          "@type": "QuantitativeValue",
+                          minValue: loaderData.budget_min ?? undefined,
+                          maxValue: loaderData.budget_max ?? undefined,
+                          unitText: "PROJECT",
+                        },
+                      }
+                    : undefined,
+              }),
+            },
+          ]
+        : [],
+    };
   },
   errorComponent: ({ error }) => <div className="p-10 text-center">{error.message}</div>,
   notFoundComponent: () => <div className="p-10 text-center">Job not found.</div>,

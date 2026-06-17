@@ -18,7 +18,9 @@ export const Route = createFileRoute("/browse")({
       { name: "description", content: "Discover vetted creative talent: video, motion, photography, design, illustration and more." },
       { property: "og:title", content: "Browse creators — CRE8IVE" },
       { property: "og:description", content: "Discover vetted creative talent across categories." },
+      { property: "og:url", content: "/browse" },
     ],
+    links: [{ rel: "canonical", href: "/browse" }],
   }),
   validateSearch: (s: Record<string, unknown>): Search => ({
     q: typeof s.q === "string" ? s.q : undefined,

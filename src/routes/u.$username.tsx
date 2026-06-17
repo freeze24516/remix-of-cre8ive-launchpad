@@ -21,18 +21,41 @@ export const Route = createFileRoute("/u/$username")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const p = loaderData?.profile;
+    const c = loaderData?.creator;
     const title = p ? `${p.display_name} (@${p.username}) — CRE8IVE` : "Creator — CRE8IVE";
-    const desc = loaderData?.creator?.headline || p?.bio || "Creative talent on CRE8IVE.";
+    const desc = c?.headline || p?.bio || "Creative talent on CRE8IVE.";
+    const path = `/u/${params.username}`;
     return {
       meta: [
         { title },
         { name: "description", content: desc },
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
-        ...(p?.avatar_url ? [{ property: "og:image", content: p.avatar_url }] : []),
+        { property: "og:type", content: "profile" },
+        { property: "og:url", content: path },
+        ...(p?.avatar_url ? [{ property: "og:image", content: p.avatar_url }, { name: "twitter:image", content: p.avatar_url }] : []),
       ],
+      links: [{ rel: "canonical", href: path }],
+      scripts: p
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Person",
+                name: p.display_name,
+                alternateName: p.username,
+                description: desc,
+                image: p.avatar_url ?? undefined,
+                jobTitle: c?.headline ?? undefined,
+                address: p.location ?? undefined,
+                url: path,
+              }),
+            },
+          ]
+        : [],
     };
   },
   notFoundComponent: () => (
