@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { listJobs } from "@/lib/jobs.functions";
 import { listCategories } from "@/lib/marketplace.functions";
+import { SaveJobButton } from "@/components/SaveJobButton";
 
 type Search = { q?: string; category?: string; remote?: boolean; page?: number };
 
@@ -90,26 +91,29 @@ function JobsPage() {
         ) : (
           <div className="mt-8 grid gap-4">
             {result.jobs.map((j: any) => (
-              <Link key={j.id} to="/jobs/$jobId" params={{ jobId: j.id }} className="group block rounded-2xl border border-border/70 bg-card p-6 shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:border-primary/40">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-display text-lg font-semibold group-hover:text-primary">{j.title}</h3>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{j.description}</p>
-                    <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                      {j.category && <Badge variant="secondary" className="text-[10px]">{j.category.name}</Badge>}
-                      {j.remote_ok && <span className="inline-flex items-center gap-1"><Globe2 className="h-3 w-3" />Remote</span>}
-                      {j.location && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{j.location}</span>}
-                      {j.deadline && <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />Due {new Date(j.deadline).toLocaleDateString()}</span>}
+              <div key={j.id} className="relative">
+                <SaveJobButton jobId={j.id} className="absolute right-3 top-3 z-10" />
+                <Link to="/jobs/$jobId" params={{ jobId: j.id }} className="group block rounded-2xl border border-border/70 bg-card p-6 pr-14 shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:border-primary/40">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-display text-lg font-semibold group-hover:text-primary">{j.title}</h3>
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{j.description}</p>
+                      <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                        {j.category && <Badge variant="secondary" className="text-[10px]">{j.category.name}</Badge>}
+                        {j.remote_ok && <span className="inline-flex items-center gap-1"><Globe2 className="h-3 w-3" />Remote</span>}
+                        {j.location && <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{j.location}</span>}
+                        {j.deadline && <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />Due {new Date(j.deadline).toLocaleDateString()}</span>}
+                      </div>
+                    </div>
+                    <div className="text-right text-sm">
+                      {(j.budget_min || j.budget_max) && (
+                        <div className="font-semibold text-accent">{j.currency} {j.budget_min ?? "?"}{j.budget_max ? `–${j.budget_max}` : ""}</div>
+                      )}
+                      <div className="mt-1 text-xs text-muted-foreground">{new Date(j.created_at).toLocaleDateString()}</div>
                     </div>
                   </div>
-                  <div className="text-right text-sm">
-                    {(j.budget_min || j.budget_max) && (
-                      <div className="font-semibold text-accent">{j.currency} {j.budget_min ?? "?"}{j.budget_max ? `–${j.budget_max}` : ""}</div>
-                    )}
-                    <div className="mt-1 text-xs text-muted-foreground">{new Date(j.created_at).toLocaleDateString()}</div>
-                  </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))}
           </div>
         )}
