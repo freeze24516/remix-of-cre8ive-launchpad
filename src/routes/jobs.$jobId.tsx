@@ -15,6 +15,8 @@ import { getJob, applyToJob } from "@/lib/jobs.functions";
 import { startConversation } from "@/lib/messaging.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { ReportDialog } from "@/components/report-dialog";
+import { SaveJobButton } from "@/components/SaveJobButton";
+import { recordEvent } from "@/lib/analytics.functions";
 
 export const Route = createFileRoute("/jobs/$jobId")({
   loader: async ({ context, params }) => {
@@ -85,9 +87,14 @@ function JobDetail() {
   const [rate, setRate] = useState<string>("");
   const applyFn = useServerFn(applyToJob);
   const startConvFn = useServerFn(startConversation);
+  const recordFn = useServerFn(recordEvent);
 
   const apply = useMutation({
-    mutationFn: () => applyFn({ data: { job_id: job.id, pitch, quoted_rate: rate ? Number(rate) : null, currency: job.currency } }),
+    mutationFn: async () => {
+      const r = await applyFn({ data: { job_id: job.id, pitch, quoted_rate: rate ? Number(rate) : null, currency: job.currency } });
+      recordFn({ data: { subjectId: job.client_id, kind: "hire_request" } }).catch(() => {});
+      return r;
+    },
     onSuccess: () => { toast.success("Application sent"); setPitch(""); setRate(""); },
     onError: (e: any) => toast.error(e.message ?? "Failed to apply"),
   });
