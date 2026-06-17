@@ -112,14 +112,22 @@ export const listVerificationRequests = createServerFn({ method: "GET" })
     const { data, error } = await supabaseAdmin
       .from("creators")
       .select(
-        "id, user_id, headline, is_verified, verification_requested_at, profile:profiles!creators_user_id_fkey(id, username, display_name, avatar_url)",
+        "id, user_id, headline, is_verified, verification_requested_at",
       )
       .not("verification_requested_at", "is", null)
       .eq("is_verified", false)
       .order("verification_requested_at", { ascending: true })
       .limit(200);
     if (error) throw new Error(error.message);
-    return data ?? [];
+    const rows = data ?? [];
+    if (rows.length === 0) return [];
+    const ids = rows.map((r) => r.user_id);
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, username, display_name, avatar_url")
+      .in("id", ids);
+    const map = new Map((profiles ?? []).map((p) => [p.id, p]));
+    return rows.map((r) => ({ ...r, profile: map.get(r.user_id) ?? null }));
   });
 
 export const setCreatorVerification = createServerFn({ method: "POST" })
