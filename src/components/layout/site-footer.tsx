@@ -23,8 +23,8 @@ export function SiteFooter() {
         <div>
           <div className="text-sm font-semibold">Legal</div>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li><span className="opacity-60">Terms (coming soon)</span></li>
-            <li><span className="opacity-60">Privacy (coming soon)</span></li>
+            <li><Link to="/terms" className="hover:text-foreground">Terms</Link></li>
+            <li><Link to="/privacy" className="hover:text-foreground">Privacy</Link></li>
           </ul>
         </div>
       </div>
