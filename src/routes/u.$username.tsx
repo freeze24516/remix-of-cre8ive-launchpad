@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { useSuspenseQuery, useMutation } from "@tanstack/react-query";
+import { useSuspenseQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { ShieldCheck, MapPin, Clock, Sparkles, ExternalLink } from "lucide-react";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -11,6 +12,11 @@ import { getCreatorByUsername } from "@/lib/marketplace.functions";
 import { startConversation } from "@/lib/messaging.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { ReportDialog } from "@/components/report-dialog";
+import { SaveCreatorButton } from "@/components/SaveCreatorButton";
+import { ReviewSection } from "@/components/reviews/ReviewSection";
+import { RatingBadge } from "@/components/reviews/RatingStars";
+import { reviewSummaries } from "@/lib/reviews.functions";
+import { recordEvent } from "@/lib/analytics.functions";
 
 export const Route = createFileRoute("/u/$username")({
   loader: async ({ context, params }) => {
