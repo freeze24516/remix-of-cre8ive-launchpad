@@ -15,6 +15,8 @@ import { getJob, applyToJob } from "@/lib/jobs.functions";
 import { startConversation } from "@/lib/messaging.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { ReportDialog } from "@/components/report-dialog";
+import { SaveJobButton } from "@/components/SaveJobButton";
+import { recordEvent } from "@/lib/analytics.functions";
 
 export const Route = createFileRoute("/jobs/$jobId")({
   loader: async ({ context, params }) => {
@@ -85,9 +87,14 @@ function JobDetail() {
   const [rate, setRate] = useState<string>("");
   const applyFn = useServerFn(applyToJob);
   const startConvFn = useServerFn(startConversation);
+  const recordFn = useServerFn(recordEvent);
 
   const apply = useMutation({
-    mutationFn: () => applyFn({ data: { job_id: job.id, pitch, quoted_rate: rate ? Number(rate) : null, currency: job.currency } }),
+    mutationFn: async () => {
+      const r = await applyFn({ data: { job_id: job.id, pitch, quoted_rate: rate ? Number(rate) : null, currency: job.currency } });
+      recordFn({ data: { subjectId: job.client_id, kind: "hire_request" } }).catch(() => {});
+      return r;
+    },
     onSuccess: () => { toast.success("Application sent"); setPitch(""); setRate(""); },
     onError: (e: any) => toast.error(e.message ?? "Failed to apply"),
   });
@@ -116,11 +123,14 @@ function JobDetail() {
                 {job.deadline && <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />Due {new Date(job.deadline).toLocaleDateString()}</span>}
               </div>
             </div>
-            {(job.budget_min || job.budget_max) && (
-              <div className="text-right text-lg font-semibold text-accent">
-                {job.currency} {job.budget_min ?? "?"}{job.budget_max ? `–${job.budget_max}` : ""}
-              </div>
-            )}
+            <div className="flex items-center gap-3">
+              {(job.budget_min || job.budget_max) && (
+                <div className="text-right text-lg font-semibold text-accent">
+                  {job.currency} {job.budget_min ?? "?"}{job.budget_max ? `–${job.budget_max}` : ""}
+                </div>
+              )}
+              <SaveJobButton jobId={job.id} variant="button" />
+            </div>
           </div>
           <p className="mt-6 whitespace-pre-wrap text-sm leading-relaxed">{job.description}</p>
           {job.skills?.length > 0 && (

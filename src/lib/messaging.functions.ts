@@ -43,7 +43,7 @@ export const getMessages = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const { data: msgs, error } = await context.supabase
       .from("messages")
-      .select("id, sender_id, body, created_at, read_at")
+      .select("id, sender_id, body, attachments, created_at, read_at")
       .eq("conversation_id", data.conversationId)
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
@@ -56,13 +56,36 @@ export const getMessages = createServerFn({ method: "GET" })
     return msgs ?? [];
   });
 
+const attachmentSchema = z.object({
+  path: z.string().min(1).max(500),
+  name: z.string().min(1).max(200),
+  size: z.number().int().min(0).max(26214400),
+  mime: z.string().min(1).max(120),
+});
+
 export const sendMessage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d) => z.object({ conversationId: z.string().uuid(), body: z.string().min(1).max(4000) }).parse(d))
+  .inputValidator((d) =>
+    z
+      .object({
+        conversationId: z.string().uuid(),
+        body: z.string().max(4000).default(""),
+        attachments: z.array(attachmentSchema).max(8).default([]),
+      })
+      .refine((v) => v.body.trim().length > 0 || v.attachments.length > 0, {
+        message: "Message or attachment required",
+      })
+      .parse(d),
+  )
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("messages")
-      .insert({ conversation_id: data.conversationId, sender_id: context.userId, body: data.body });
+      .insert({
+        conversation_id: data.conversationId,
+        sender_id: context.userId,
+        body: data.body,
+        attachments: data.attachments as any,
+      });
     if (error) throw new Error(error.message);
     return { ok: true };
   });
