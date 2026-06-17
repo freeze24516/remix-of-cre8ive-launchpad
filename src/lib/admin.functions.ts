@@ -159,7 +159,7 @@ export const listPendingPortfolios = createServerFn({ method: "GET" })
     const { data, error } = await supabaseAdmin
       .from("portfolios")
       .select(
-        "id, title, description, cover_image, project_url, created_at, creator:creators(id, user_id, profile:profiles!creators_user_id_fkey(username, display_name))",
+        "id, title, description, cover_image, project_url, created_at, creator:creators(id, user_id, profile:profiles!creators_user_id_profiles_fkey(username, display_name))",
       )
       .eq("is_approved", false)
       .order("created_at", { ascending: false })

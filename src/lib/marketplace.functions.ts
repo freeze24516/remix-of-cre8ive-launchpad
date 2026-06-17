@@ -17,7 +17,7 @@ export const browseCreators = createServerFn({ method: "GET" })
     let query = supabaseAdmin
       .from("creators")
       .select(
-        "id, headline, about, availability, is_verified, is_featured, view_count, profile:profiles!creators_user_id_fkey(id, username, display_name, avatar_url, location), creator_categories(category:categories(id, slug, name))",
+        "id, user_id, headline, about, availability, is_verified, is_featured, view_count, creator_categories(category:categories(id, slug, name))",
         { count: "exact" },
       )
       .eq("is_approved", true)
@@ -32,11 +32,22 @@ export const browseCreators = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
 
     let filtered = rows ?? [];
+    const ids = filtered.map((r: any) => r.user_id);
+    let profilesMap = new Map<string, any>();
+    if (ids.length > 0) {
+      const { data: profs } = await supabaseAdmin
+        .from("profiles")
+        .select("id, username, display_name, avatar_url, location")
+        .in("id", ids);
+      profilesMap = new Map((profs ?? []).map((p: any) => [p.id, p]));
+    }
+    filtered = filtered.map((r: any) => ({ ...r, profile: profilesMap.get(r.user_id) ?? null }));
     if (data.category) {
       filtered = filtered.filter((c: any) =>
         c.creator_categories?.some((cc: any) => cc.category?.slug === data.category),
       );
     }
+    filtered = filtered.filter((c: any) => c.profile);
     return { creators: filtered, total: count ?? 0, page: data.page, pageSize };
   });
 

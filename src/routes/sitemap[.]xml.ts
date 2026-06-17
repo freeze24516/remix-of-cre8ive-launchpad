@@ -28,7 +28,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           const [{ data: creators }, { data: jobs }] = await Promise.all([
             supabaseAdmin
               .from("creators")
-              .select("updated_at, profile:profiles!creators_user_id_fkey(username)")
+              .select("updated_at, profile:profiles!creators_user_id_profiles_fkey(username)")
               .eq("is_approved", true)
               .limit(5000),
             supabaseAdmin
