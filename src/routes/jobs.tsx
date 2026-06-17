@@ -19,7 +19,9 @@ export const Route = createFileRoute("/jobs")({
       { name: "description", content: "Browse open creative briefs and projects from vetted clients." },
       { property: "og:title", content: "Creative jobs — CRE8IVE" },
       { property: "og:description", content: "Find your next creative project on CRE8IVE." },
+      { property: "og:url", content: "/jobs" },
     ],
+    links: [{ rel: "canonical", href: "/jobs" }],
   }),
   validateSearch: (s: Record<string, unknown>): Search => ({
     q: typeof s.q === "string" ? s.q : undefined,

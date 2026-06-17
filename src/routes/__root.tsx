@@ -92,6 +92,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "CRE8IVE",
+          description: "Curated marketplace for creative talent.",
+          url: "/",
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
