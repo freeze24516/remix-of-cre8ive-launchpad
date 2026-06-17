@@ -123,11 +123,14 @@ function JobDetail() {
                 {job.deadline && <span className="inline-flex items-center gap-1"><Clock className="h-3 w-3" />Due {new Date(job.deadline).toLocaleDateString()}</span>}
               </div>
             </div>
-            {(job.budget_min || job.budget_max) && (
-              <div className="text-right text-lg font-semibold text-accent">
-                {job.currency} {job.budget_min ?? "?"}{job.budget_max ? `–${job.budget_max}` : ""}
-              </div>
-            )}
+            <div className="flex items-center gap-3">
+              {(job.budget_min || job.budget_max) && (
+                <div className="text-right text-lg font-semibold text-accent">
+                  {job.currency} {job.budget_min ?? "?"}{job.budget_max ? `–${job.budget_max}` : ""}
+                </div>
+              )}
+              <SaveJobButton jobId={job.id} variant="button" />
+            </div>
           </div>
           <p className="mt-6 whitespace-pre-wrap text-sm leading-relaxed">{job.description}</p>
           {job.skills?.length > 0 && (
