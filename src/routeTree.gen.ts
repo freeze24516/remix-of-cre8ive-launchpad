@@ -24,6 +24,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedDashboardSavedJobsRouteImport } from './routes/_authenticated/dashboard.saved-jobs'
+import { Route as AuthenticatedDashboardSavedCreatorsRouteImport } from './routes/_authenticated/dashboard.saved-creators'
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard.profile'
 import { Route as AuthenticatedDashboardPortfolioRouteImport } from './routes/_authenticated/dashboard.portfolio'
 import { Route as AuthenticatedDashboardNotificationsRouteImport } from './routes/_authenticated/dashboard.notifications'
@@ -31,6 +33,7 @@ import { Route as AuthenticatedDashboardMessagesRouteImport } from './routes/_au
 import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard.jobs'
 import { Route as AuthenticatedDashboardCreatorRouteImport } from './routes/_authenticated/dashboard.creator'
 import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard.applications'
+import { Route as AuthenticatedDashboardAnalyticsRouteImport } from './routes/_authenticated/dashboard.analytics'
 import { Route as AuthenticatedAdminVerificationsRouteImport } from './routes/_authenticated/admin.verifications'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
@@ -113,6 +116,18 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedDashboardSavedJobsRoute =
+  AuthenticatedDashboardSavedJobsRouteImport.update({
+    id: '/saved-jobs',
+    path: '/saved-jobs',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardSavedCreatorsRoute =
+  AuthenticatedDashboardSavedCreatorsRouteImport.update({
+    id: '/saved-creators',
+    path: '/saved-creators',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardProfileRoute =
   AuthenticatedDashboardProfileRouteImport.update({
     id: '/profile',
@@ -153,6 +168,12 @@ const AuthenticatedDashboardApplicationsRoute =
   AuthenticatedDashboardApplicationsRouteImport.update({
     id: '/applications',
     path: '/applications',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardAnalyticsRoute =
+  AuthenticatedDashboardAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
 const AuthenticatedAdminVerificationsRoute =
@@ -208,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
+  '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
@@ -215,6 +237,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/saved-creators': typeof AuthenticatedDashboardSavedCreatorsRoute
+  '/dashboard/saved-jobs': typeof AuthenticatedDashboardSavedJobsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
@@ -235,6 +259,7 @@ export interface FileRoutesByTo {
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
+  '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
@@ -242,6 +267,8 @@ export interface FileRoutesByTo {
   '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/saved-creators': typeof AuthenticatedDashboardSavedCreatorsRoute
+  '/dashboard/saved-jobs': typeof AuthenticatedDashboardSavedJobsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
@@ -266,6 +293,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
+  '/_authenticated/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/_authenticated/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/_authenticated/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/_authenticated/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
@@ -273,6 +301,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/_authenticated/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/_authenticated/dashboard/saved-creators': typeof AuthenticatedDashboardSavedCreatorsRoute
+  '/_authenticated/dashboard/saved-jobs': typeof AuthenticatedDashboardSavedJobsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
@@ -297,6 +327,7 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/users'
     | '/admin/verifications'
+    | '/dashboard/analytics'
     | '/dashboard/applications'
     | '/dashboard/creator'
     | '/dashboard/jobs'
@@ -304,6 +335,8 @@ export interface FileRouteTypes {
     | '/dashboard/notifications'
     | '/dashboard/portfolio'
     | '/dashboard/profile'
+    | '/dashboard/saved-creators'
+    | '/dashboard/saved-jobs'
     | '/admin/'
     | '/dashboard/'
     | '/dashboard/jobs/$jobId'
@@ -324,6 +357,7 @@ export interface FileRouteTypes {
     | '/admin/reports'
     | '/admin/users'
     | '/admin/verifications'
+    | '/dashboard/analytics'
     | '/dashboard/applications'
     | '/dashboard/creator'
     | '/dashboard/jobs'
@@ -331,6 +365,8 @@ export interface FileRouteTypes {
     | '/dashboard/notifications'
     | '/dashboard/portfolio'
     | '/dashboard/profile'
+    | '/dashboard/saved-creators'
+    | '/dashboard/saved-jobs'
     | '/admin'
     | '/dashboard'
     | '/dashboard/jobs/$jobId'
@@ -354,6 +390,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/reports'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/verifications'
+    | '/_authenticated/dashboard/analytics'
     | '/_authenticated/dashboard/applications'
     | '/_authenticated/dashboard/creator'
     | '/_authenticated/dashboard/jobs'
@@ -361,6 +398,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/notifications'
     | '/_authenticated/dashboard/portfolio'
     | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/saved-creators'
+    | '/_authenticated/dashboard/saved-jobs'
     | '/_authenticated/admin/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/jobs/$jobId'
@@ -486,6 +525,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/dashboard/saved-jobs': {
+      id: '/_authenticated/dashboard/saved-jobs'
+      path: '/saved-jobs'
+      fullPath: '/dashboard/saved-jobs'
+      preLoaderRoute: typeof AuthenticatedDashboardSavedJobsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/saved-creators': {
+      id: '/_authenticated/dashboard/saved-creators'
+      path: '/saved-creators'
+      fullPath: '/dashboard/saved-creators'
+      preLoaderRoute: typeof AuthenticatedDashboardSavedCreatorsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/profile': {
       id: '/_authenticated/dashboard/profile'
       path: '/profile'
@@ -533,6 +586,13 @@ declare module '@tanstack/react-router' {
       path: '/applications'
       fullPath: '/dashboard/applications'
       preLoaderRoute: typeof AuthenticatedDashboardApplicationsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/analytics': {
+      id: '/_authenticated/dashboard/analytics'
+      path: '/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof AuthenticatedDashboardAnalyticsRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/admin/verifications': {
@@ -616,6 +676,7 @@ const AuthenticatedDashboardJobsRouteWithChildren =
   )
 
 interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardAnalyticsRoute: typeof AuthenticatedDashboardAnalyticsRoute
   AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
   AuthenticatedDashboardCreatorRoute: typeof AuthenticatedDashboardCreatorRoute
   AuthenticatedDashboardJobsRoute: typeof AuthenticatedDashboardJobsRouteWithChildren
@@ -623,11 +684,14 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardNotificationsRoute: typeof AuthenticatedDashboardNotificationsRoute
   AuthenticatedDashboardPortfolioRoute: typeof AuthenticatedDashboardPortfolioRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
+  AuthenticatedDashboardSavedCreatorsRoute: typeof AuthenticatedDashboardSavedCreatorsRoute
+  AuthenticatedDashboardSavedJobsRoute: typeof AuthenticatedDashboardSavedJobsRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
+    AuthenticatedDashboardAnalyticsRoute: AuthenticatedDashboardAnalyticsRoute,
     AuthenticatedDashboardApplicationsRoute:
       AuthenticatedDashboardApplicationsRoute,
     AuthenticatedDashboardCreatorRoute: AuthenticatedDashboardCreatorRoute,
@@ -638,6 +702,9 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
       AuthenticatedDashboardNotificationsRoute,
     AuthenticatedDashboardPortfolioRoute: AuthenticatedDashboardPortfolioRoute,
     AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+    AuthenticatedDashboardSavedCreatorsRoute:
+      AuthenticatedDashboardSavedCreatorsRoute,
+    AuthenticatedDashboardSavedJobsRoute: AuthenticatedDashboardSavedJobsRoute,
     AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   }
 

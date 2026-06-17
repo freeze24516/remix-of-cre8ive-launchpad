@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, User, Palette, FolderKanban, Briefcase, MessageSquare, Bell, FileText } from "lucide-react";
+import { LayoutDashboard, User, Palette, FolderKanban, Briefcase, MessageSquare, Bell, FileText, Heart, Bookmark, BarChart3 } from "lucide-react";
 import { SiteHeader } from "@/components/layout/site-header";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -12,8 +12,11 @@ const nav = [
   { to: "/dashboard/profile", label: "Account", Icon: User, exact: false as boolean },
   { to: "/dashboard/creator", label: "Creator profile", Icon: Palette, exact: false as boolean },
   { to: "/dashboard/portfolio", label: "Portfolio", Icon: FolderKanban, exact: false as boolean },
+  { to: "/dashboard/analytics", label: "Analytics", Icon: BarChart3, exact: false as boolean },
   { to: "/dashboard/jobs", label: "My jobs", Icon: Briefcase, exact: false as boolean },
   { to: "/dashboard/applications", label: "Applications", Icon: FileText, exact: false as boolean },
+  { to: "/dashboard/saved-creators", label: "Saved creators", Icon: Heart, exact: false as boolean },
+  { to: "/dashboard/saved-jobs", label: "Saved jobs", Icon: Bookmark, exact: false as boolean },
   { to: "/dashboard/messages", label: "Messages", Icon: MessageSquare, exact: false as boolean },
   { to: "/dashboard/notifications", label: "Notifications", Icon: Bell, exact: false as boolean },
 ] as const;
