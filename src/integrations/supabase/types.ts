@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          id: number
+          kind: Database["public"]["Enums"]["analytics_kind"]
+          meta: Json
+          subject_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          id?: number
+          kind: Database["public"]["Enums"]["analytics_kind"]
+          meta?: Json
+          subject_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          id?: number
+          kind?: Database["public"]["Enums"]["analytics_kind"]
+          meta?: Json
+          subject_id?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           icon: string | null
@@ -285,6 +312,7 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachments: Json
           body: string
           conversation_id: string
           created_at: string
@@ -293,6 +321,7 @@ export type Database = {
           sender_id: string
         }
         Insert: {
+          attachments?: Json
           body: string
           conversation_id: string
           created_at?: string
@@ -301,6 +330,7 @@ export type Database = {
           sender_id: string
         }
         Update: {
+          attachments?: Json
           body?: string
           conversation_id?: string
           created_at?: string
@@ -489,6 +519,50 @@ export type Database = {
         }
         Relationships: []
       }
+      reviews: {
+        Row: {
+          body: string | null
+          created_at: string
+          direction: Database["public"]["Enums"]["review_direction"]
+          id: string
+          job_id: string | null
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          direction: Database["public"]["Enums"]["review_direction"]
+          id?: string
+          job_id?: string | null
+          rating: number
+          reviewee_id: string
+          reviewer_id: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          direction?: Database["public"]["Enums"]["review_direction"]
+          id?: string
+          job_id?: string | null
+          rating?: number
+          reviewee_id?: string
+          reviewer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       saved_creators: {
         Row: {
           client_id: string
@@ -511,6 +585,32 @@ export type Database = {
             columns: ["creator_id"]
             isOneToOne: false
             referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_jobs: {
+        Row: {
+          created_at: string
+          job_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          job_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          job_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_jobs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
         ]
@@ -549,8 +649,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      user_in_conversation: { Args: { _conv_id: string }; Returns: boolean }
     }
     Enums: {
+      analytics_kind:
+        | "profile_view"
+        | "portfolio_view"
+        | "contact_request"
+        | "hire_request"
+        | "job_application"
       app_role: "admin" | "moderator" | "user"
       application_status:
         | "pending"
@@ -563,6 +670,7 @@ export type Database = {
       job_status: "draft" | "open" | "in_review" | "closed" | "filled"
       report_status: "open" | "reviewing" | "resolved" | "dismissed"
       report_target: "creator" | "client" | "job" | "portfolio" | "message"
+      review_direction: "client_to_creator" | "creator_to_client"
       user_kind: "client" | "creator"
     }
     CompositeTypes: {
@@ -691,6 +799,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      analytics_kind: [
+        "profile_view",
+        "portfolio_view",
+        "contact_request",
+        "hire_request",
+        "job_application",
+      ],
       app_role: ["admin", "moderator", "user"],
       application_status: [
         "pending",
@@ -704,6 +819,7 @@ export const Constants = {
       job_status: ["draft", "open", "in_review", "closed", "filled"],
       report_status: ["open", "reviewing", "resolved", "dismissed"],
       report_target: ["creator", "client", "job", "portfolio", "message"],
+      review_direction: ["client_to_creator", "creator_to_client"],
       user_kind: ["client", "creator"],
     },
   },
