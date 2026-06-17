@@ -25,7 +25,7 @@ export const recordEvent = createServerFn({ method: "POST" })
     await supabaseAdmin.from("analytics_events").insert({
       subject_id: data.subjectId,
       kind: data.kind,
-      meta: data.meta ?? {},
+      meta: (data.meta ?? {}) as any,
     });
     return { ok: true };
   });
