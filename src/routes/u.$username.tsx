@@ -88,8 +88,20 @@ function CreatorPage() {
   if (!data) return null;
   const { profile, creator, portfolios } = data;
   const startConvFn = useServerFn(startConversation);
+  const recordFn = useServerFn(recordEvent);
+  useEffect(() => {
+    recordFn({ data: { subjectId: profile.id, kind: "profile_view" } }).catch(() => {});
+  }, [profile.id, recordFn]);
+  const { data: summary } = useQuery({
+    queryKey: ["review-summary", profile.id],
+    queryFn: () => reviewSummaries({ data: { userIds: [profile.id] } }),
+  });
+  const s = summary?.[profile.id] ?? { average: 0, count: 0 };
   const dm = useMutation({
-    mutationFn: () => startConvFn({ data: { otherUserId: profile.id } }),
+    mutationFn: async () => {
+      await recordFn({ data: { subjectId: profile.id, kind: "contact_request" } });
+      return startConvFn({ data: { otherUserId: profile.id } });
+    },
     onSuccess: (r) => navigate({ to: "/dashboard/messages", search: { c: r.id } }),
     onError: (e: any) => toast.error(e.message ?? "Failed"),
   });
@@ -111,12 +123,16 @@ function CreatorPage() {
               </div>
               <div className="mt-1 text-sm text-muted-foreground">@{profile.username}</div>
               {creator?.headline && <p className="mt-3 max-w-2xl text-lg">{creator.headline}</p>}
+              <div className="mt-3"><RatingBadge average={s.average} count={s.count} /></div>
               <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                 {profile.location && <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{profile.location}</span>}
                 {creator?.availability && <span className="inline-flex items-center gap-1 capitalize"><Sparkles className="h-3.5 w-3.5 text-accent" />{creator.availability}</span>}
                 {creator?.response_hours && <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" />replies in ~{creator.response_hours}h</span>}
               </div>
             </div>
+            {creator && (
+              <div className="mt-2 md:mt-0"><SaveCreatorButton creatorId={creator.id} variant="button" /></div>
+            )}
           </div>
         </div>
       </section>
@@ -163,6 +179,8 @@ function CreatorPage() {
                   <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">{creator.about}</p>
                 </div>
               )}
+
+              <ReviewSection revieweeId={profile.id} direction="client_to_creator" />
             </div>
 
             <aside className="space-y-6">
