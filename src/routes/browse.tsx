@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { browseCreators, listCategories } from "@/lib/marketplace.functions";
+import { reviewSummaries } from "@/lib/reviews.functions";
+import { SaveCreatorButton } from "@/components/SaveCreatorButton";
+import { RatingBadge } from "@/components/reviews/RatingStars";
 
 type Search = { q?: string; category?: string; availability?: "available" | "limited" | "booked" | "vacation"; page?: number };
 
@@ -59,6 +62,12 @@ function BrowsePage() {
   const { data: result } = useQuery({
     queryKey: ["browse", search],
     queryFn: () => browseCreators({ data: { ...search, page: search.page ?? 1 } }),
+  });
+  const userIds = (result?.creators ?? []).map((c: any) => c.user_id).filter(Boolean);
+  const { data: summaries } = useQuery({
+    queryKey: ["review-summaries", userIds],
+    queryFn: () => reviewSummaries({ data: { userIds } }),
+    enabled: userIds.length > 0,
   });
 
   function applySearch(next: Partial<Search>) {
@@ -124,36 +133,42 @@ function BrowsePage() {
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {result.creators.map((c: any) => (
-              <Link
-                key={c.id}
-                to="/u/$username"
-                params={{ username: c.profile.username }}
-                className="group rounded-2xl border border-border/70 bg-card p-5 shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:border-primary/40"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 overflow-hidden rounded-full bg-muted">
-                    {c.profile.avatar_url ? <img src={c.profile.avatar_url} alt="" className="h-full w-full object-cover" /> : null}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1.5 font-medium">
-                      <span className="truncate">{c.profile.display_name}</span>
-                      {c.is_verified && <ShieldCheck className="h-4 w-4 text-accent" />}
+            {result.creators.map((c: any) => {
+              const s = summaries?.[c.user_id] ?? { average: 0, count: 0 };
+              return (
+                <div key={c.id} className="relative">
+                  <SaveCreatorButton creatorId={c.id} className="absolute right-3 top-3 z-10" />
+                  <Link
+                    to="/u/$username"
+                    params={{ username: c.profile.username }}
+                    className="group block rounded-2xl border border-border/70 bg-card p-5 shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:border-primary/40"
+                  >
+                    <div className="flex items-center gap-3 pr-10">
+                      <div className="h-12 w-12 overflow-hidden rounded-full bg-muted">
+                        {c.profile.avatar_url ? <img src={c.profile.avatar_url} alt="" className="h-full w-full object-cover" /> : null}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 font-medium">
+                          <span className="truncate">{c.profile.display_name}</span>
+                          {c.is_verified && <ShieldCheck className="h-4 w-4 text-accent" />}
+                        </div>
+                        <div className="text-xs text-muted-foreground">@{c.profile.username}</div>
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">@{c.profile.username}</div>
-                  </div>
+                    {c.headline && <p className="mt-3 line-clamp-2 text-sm">{c.headline}</p>}
+                    <div className="mt-3"><RatingBadge average={s.average} count={s.count} /></div>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {c.creator_categories?.slice(0, 3).map((cc: any) => (
+                        <Badge key={cc.category.id} variant="secondary" className="text-[10px]">{cc.category.name}</Badge>
+                      ))}
+                    </div>
+                    {c.profile.location && (
+                      <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3" />{c.profile.location}</div>
+                    )}
+                  </Link>
                 </div>
-                {c.headline && <p className="mt-3 line-clamp-2 text-sm">{c.headline}</p>}
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {c.creator_categories?.slice(0, 3).map((cc: any) => (
-                    <Badge key={cc.category.id} variant="secondary" className="text-[10px]">{cc.category.name}</Badge>
-                  ))}
-                </div>
-                {c.profile.location && (
-                  <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3" />{c.profile.location}</div>
-                )}
-              </Link>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>
