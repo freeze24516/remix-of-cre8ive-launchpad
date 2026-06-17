@@ -15,7 +15,7 @@ function DashboardOverview() {
       const { data: u } = await supabase.auth.getUser();
       const userId = u.user!.id;
       const [{ data: profile }, { data: creator }] = await Promise.all([
-        supabase.from("profiles").select("*").eq("id", userId).single(),
+        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
         supabase.from("creators").select("*").eq("user_id", userId).maybeSingle(),
       ]);
       let portfolioCount = 0;
