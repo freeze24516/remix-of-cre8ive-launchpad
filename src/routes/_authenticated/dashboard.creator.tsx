@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { X, ShieldCheck } from "lucide-react";
+import { X } from "lucide-react";
 import { requestVerification } from "@/lib/admin.functions";
 import { updateCreatorMeta } from "@/lib/marketplace.functions";
 import { AvailabilityCalendar } from "@/components/marketplace/AvailabilityCalendar";
