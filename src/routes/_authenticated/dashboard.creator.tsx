@@ -114,9 +114,9 @@ function CreatorEditPage() {
   if (!data.creator) return <div className="rounded-xl border border-dashed border-border p-6 text-muted-foreground">Set your role to “creator” in onboarding first.</div>;
 
   const c = data.creator;
-  const verifBlock = c.is_verified ? (
-    <div className="flex items-center gap-2 rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm">
-      <ShieldCheck className="h-5 w-5 text-accent" />
+  const verifBlock = (c as any).verification_level > 0 ? (
+    <div className="flex items-center gap-3 rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm">
+      <VerificationBadge level={(c as any).verification_level} size="md" />
       <span>You're a verified creator.</span>
     </div>
   ) : c.verification_requested_at ? (
