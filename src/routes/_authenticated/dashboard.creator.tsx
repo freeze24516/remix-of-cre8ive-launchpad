@@ -134,79 +134,124 @@ function CreatorEditPage() {
   );
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold">Creator profile</h1>
-        <p className="text-sm text-muted-foreground">How clients discover and evaluate you.</p>
-      </div>
+    <div className="grid max-w-5xl gap-8 lg:grid-cols-[1fr,360px]">
+      <div className="space-y-6">
+        <div>
+          <h1 className="font-display text-2xl font-bold">Creator profile</h1>
+          <p className="text-sm text-muted-foreground">How clients discover and evaluate you.</p>
+        </div>
 
-      {verifBlock}
+        {verifBlock}
 
-      <div className="space-y-1.5">
-        <Label>Headline</Label>
-        <Input value={form.headline} onChange={(e) => setForm({ ...form, headline: e.target.value })} maxLength={120} placeholder="e.g. Motion designer for premium brands" />
-      </div>
-      <div className="space-y-1.5">
-        <Label>About</Label>
-        <Textarea rows={6} value={form.about} onChange={(e) => setForm({ ...form, about: e.target.value })} maxLength={2000} />
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-1.5">
-          <Label>Availability</Label>
-          <select className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm" value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value as any })}>
-            {AVAILABILITY.map((a) => <option key={a} value={a}>{a}</option>)}
-          </select>
+          <Label>Headline</Label>
+          <Input value={form.headline} onChange={(e) => setForm({ ...form, headline: e.target.value })} maxLength={120} placeholder="e.g. Motion designer for premium brands" />
         </div>
         <div className="space-y-1.5">
-          <Label>Experience</Label>
-          <select className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm" value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value as any })}>
-            {EXPERIENCE.map((a) => <option key={a} value={a}>{a}</option>)}
-          </select>
+          <Label>About</Label>
+          <Textarea rows={6} value={form.about} onChange={(e) => setForm({ ...form, about: e.target.value })} maxLength={2000} />
         </div>
-        <div className="space-y-1.5">
-          <Label>Response hours</Label>
-          <Input type="number" min={1} max={168} value={form.response_hours} onChange={(e) => setForm({ ...form, response_hours: parseInt(e.target.value) || 24 })} />
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          <div className="space-y-1.5">
+            <Label>Availability</Label>
+            <select className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm" value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value as any })}>
+              {AVAILABILITY.map((a) => <option key={a} value={a}>{a}</option>)}
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Experience</Label>
+            <select className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm" value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value as any })}>
+              {EXPERIENCE.map((a) => <option key={a} value={a}>{a}</option>)}
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Response hours</Label>
+            <Input type="number" min={1} max={168} value={form.response_hours} onChange={(e) => setForm({ ...form, response_hours: parseInt(e.target.value) || 24 })} />
+          </div>
         </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label>Typical budget</Label>
+            <select className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm" value={(c as any).budget_tier ?? ""} onChange={async (e) => { await updateCreatorMeta({ data: { budget_tier: (e.target.value || null) as any } }); qc.invalidateQueries({ queryKey: ["my-creator"] }); toast.success("Saved"); }}>
+              <option value="">—</option>
+              {BUDGETS.map((b) => <option key={b.v} value={b.v}>{b.label}</option>)}
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Works with</Label>
+            <select className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm" value={(c as any).location_scope ?? ""} onChange={async (e) => { await updateCreatorMeta({ data: { location_scope: (e.target.value || null) as any } }); qc.invalidateQueries({ queryKey: ["my-creator"] }); toast.success("Saved"); }}>
+              <option value="">—</option>
+              {LOCATIONS.map((l) => <option key={l.v} value={l.v}>{l.label}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Tools you use</Label>
+          <div className="flex flex-wrap gap-2">
+            {TOOLS.map((t) => {
+              const active = ((c as any).tools ?? []).includes(t);
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={async () => {
+                    const cur: string[] = (c as any).tools ?? [];
+                    const next = active ? cur.filter((x) => x !== t) : [...cur, t];
+                    await updateCreatorMeta({ data: { tools: next } });
+                    qc.invalidateQueries({ queryKey: ["my-creator"] });
+                  }}
+                  className={`rounded-full border px-3 py-1 text-sm transition ${active ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:text-foreground"}`}
+                >
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Crafts</Label>
+          <div className="flex flex-wrap gap-2">
+            {data.categories.map((c: any) => {
+              const active = selectedCats.includes(c.id);
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setSelectedCats((s) => active ? s.filter((x) => x !== c.id) : [...s, c.id])}
+                  className={`rounded-full border px-3 py-1 text-sm transition ${active ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:text-foreground"}`}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Skills</Label>
+          <div className="flex gap-2">
+            <Input value={skillInput} onChange={(e) => setSkillInput(e.target.value)} placeholder="e.g. Color grading" onKeyDown={(e) => {
+              if (e.key === "Enter") { e.preventDefault(); const v = skillInput.trim(); if (v && !skills.includes(v)) setSkills([...skills, v]); setSkillInput(""); }
+            }} />
+            <Button type="button" variant="outline" onClick={() => { const v = skillInput.trim(); if (v && !skills.includes(v)) setSkills([...skills, v]); setSkillInput(""); }}>Add</Button>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {skills.map((s) => (
+              <Badge key={s} variant="secondary" className="gap-1">
+                {s}<button type="button" onClick={() => setSkills(skills.filter((x) => x !== s))}><X className="h-3 w-3" /></button>
+              </Badge>
+            ))}
+          </div>
+        </div>
+
+        <Button onClick={save} disabled={busy} className="bg-[image:var(--gradient-primary)]">{busy ? "Saving…" : "Save creator profile"}</Button>
       </div>
 
-      <div className="space-y-2">
-        <Label>Crafts</Label>
-        <div className="flex flex-wrap gap-2">
-          {data.categories.map((c: any) => {
-            const active = selectedCats.includes(c.id);
-            return (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => setSelectedCats((s) => active ? s.filter((x) => x !== c.id) : [...s, c.id])}
-                className={`rounded-full border px-3 py-1 text-sm transition ${active ? "border-primary bg-primary/10 text-foreground" : "border-border text-muted-foreground hover:text-foreground"}`}
-              >
-                {c.name}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label>Skills & tools</Label>
-        <div className="flex gap-2">
-          <Input value={skillInput} onChange={(e) => setSkillInput(e.target.value)} placeholder="e.g. After Effects" onKeyDown={(e) => {
-            if (e.key === "Enter") { e.preventDefault(); const v = skillInput.trim(); if (v && !skills.includes(v)) setSkills([...skills, v]); setSkillInput(""); }
-          }} />
-          <Button type="button" variant="outline" onClick={() => { const v = skillInput.trim(); if (v && !skills.includes(v)) setSkills([...skills, v]); setSkillInput(""); }}>Add</Button>
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {skills.map((s) => (
-            <Badge key={s} variant="secondary" className="gap-1">
-              {s}<button type="button" onClick={() => setSkills(skills.filter((x) => x !== s))}><X className="h-3 w-3" /></button>
-            </Badge>
-          ))}
-        </div>
-      </div>
-
-      <Button onClick={save} disabled={busy} className="bg-[image:var(--gradient-primary)]">{busy ? "Saving…" : "Save creator profile"}</Button>
+      <AvailabilityCalendar />
     </div>
   );
 }
