@@ -10,6 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { X, ShieldCheck } from "lucide-react";
 import { requestVerification } from "@/lib/admin.functions";
+import { updateCreatorMeta } from "@/lib/marketplace.functions";
+import { AvailabilityCalendar } from "@/components/marketplace/AvailabilityCalendar";
+import { VerificationBadge } from "@/components/VerificationBadge";
 
 export const Route = createFileRoute("/_authenticated/dashboard/creator")({
   component: CreatorEditPage,
@@ -17,6 +20,18 @@ export const Route = createFileRoute("/_authenticated/dashboard/creator")({
 
 const AVAILABILITY = ["available", "limited", "booked", "vacation"] as const;
 const EXPERIENCE = ["entry", "intermediate", "expert"] as const;
+const BUDGETS = [
+  { v: "5k-10k", label: "₹5k–₹10k" },
+  { v: "10k-25k", label: "₹10k–₹25k" },
+  { v: "25k-50k", label: "₹25k–₹50k" },
+  { v: "50k+", label: "₹50k+" },
+] as const;
+const LOCATIONS = [
+  { v: "remote", label: "Remote" },
+  { v: "india", label: "India" },
+  { v: "global", label: "Global" },
+] as const;
+const TOOLS = ["Premiere Pro", "After Effects", "Photoshop", "Blender", "DaVinci Resolve", "Figma"] as const;
 
 function CreatorEditPage() {
   const qc = useQueryClient();

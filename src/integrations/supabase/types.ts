@@ -142,52 +142,114 @@ export type Database = {
           },
         ]
       }
+      creator_unavailable_dates: {
+        Row: {
+          created_at: string
+          creator_id: string
+          date: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          date: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          date?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "creator_unavailable_dates_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       creators: {
         Row: {
           about: string | null
           availability: Database["public"]["Enums"]["availability_status"]
+          budget_tier: string | null
           created_at: string
           experience: Database["public"]["Enums"]["experience_level"] | null
           headline: string | null
+          hire_count: number
           id: string
           is_approved: boolean
           is_featured: boolean
+          is_spotlight: boolean
           is_verified: boolean
+          last_active_at: string
+          location_scope: string | null
           response_hours: number
+          spotlight_until: string | null
+          tools: string[]
           updated_at: string
           user_id: string
+          vacation_from: string | null
+          vacation_to: string | null
+          verification_level: number
           verification_requested_at: string | null
           view_count: number
         }
         Insert: {
           about?: string | null
           availability?: Database["public"]["Enums"]["availability_status"]
+          budget_tier?: string | null
           created_at?: string
           experience?: Database["public"]["Enums"]["experience_level"] | null
           headline?: string | null
+          hire_count?: number
           id?: string
           is_approved?: boolean
           is_featured?: boolean
+          is_spotlight?: boolean
           is_verified?: boolean
+          last_active_at?: string
+          location_scope?: string | null
           response_hours?: number
+          spotlight_until?: string | null
+          tools?: string[]
           updated_at?: string
           user_id: string
+          vacation_from?: string | null
+          vacation_to?: string | null
+          verification_level?: number
           verification_requested_at?: string | null
           view_count?: number
         }
         Update: {
           about?: string | null
           availability?: Database["public"]["Enums"]["availability_status"]
+          budget_tier?: string | null
           created_at?: string
           experience?: Database["public"]["Enums"]["experience_level"] | null
           headline?: string | null
+          hire_count?: number
           id?: string
           is_approved?: boolean
           is_featured?: boolean
+          is_spotlight?: boolean
           is_verified?: boolean
+          last_active_at?: string
+          location_scope?: string | null
           response_hours?: number
+          spotlight_until?: string | null
+          tools?: string[]
           updated_at?: string
           user_id?: string
+          vacation_from?: string | null
+          vacation_to?: string | null
+          verification_level?: number
           verification_requested_at?: string | null
           view_count?: number
         }

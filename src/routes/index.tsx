@@ -4,6 +4,9 @@ import { ArrowRight, Sparkles, Star, ShieldCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { SpotlightSection } from "@/components/marketplace/SpotlightSection";
+import { FeaturedCreatorsStrip } from "@/components/marketplace/FeaturedCreatorsStrip";
+import { MarketplaceStats } from "@/components/marketplace/MarketplaceStats";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,11 +49,17 @@ function Index() {
               <Link to="/auth" search={{ mode: "signup" }}>Join as a creator <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
             <Button asChild size="lg" variant="outline">
-              <Link to="/auth" search={{ mode: "signup" }}>Hire creators</Link>
+              <Link to="/browse">Browse creators</Link>
             </Button>
           </div>
         </div>
       </section>
+
+      <MarketplaceStats />
+
+      <SpotlightSection />
+
+      <FeaturedCreatorsStrip />
 
       {/* Categories */}
       <section id="categories" className="border-y border-border/60 bg-card/30">
