@@ -103,7 +103,7 @@ export const getCreatorByUsername = createServerFn({ method: "GET" })
     const { data: creator } = await supabaseAdmin
       .from("creators")
       .select(
-        "id, headline, about, experience, availability, response_hours, is_verified, verification_level, is_featured, is_spotlight, budget_tier, location_scope, tools, hire_count, last_active_at, vacation_from, vacation_to, view_count, creator_categories(category:categories(id, slug, name)), creator_skills(skill)",
+        "id, headline, about, experience, availability, response_hours, is_verified, verification_level, is_featured, is_spotlight, budget_tier, location_scope, tools, hire_count, last_active_at, vacation_from, vacation_to, view_count, completion_rate, repeat_client_rate, years_experience, creator_categories(category:categories(id, slug, name)), creator_skills(skill)",
       )
       .eq("user_id", profile.id)
       .eq("is_approved", true)
@@ -111,10 +111,13 @@ export const getCreatorByUsername = createServerFn({ method: "GET" })
 
     let portfolios: any[] = [];
     let unavailableDates: string[] = [];
+    let hireSuccessRate: number | null = null;
     if (creator) {
       const { data: items } = await supabaseAdmin
         .from("portfolios")
-        .select("id, title, description, cover_image, project_url, software, category_id, view_count, created_at")
+        .select(
+          "id, title, description, cover_image, project_url, software, category_id, view_count, created_at, client_name, industry, timeline, team_size, services, case_study",
+        )
         .eq("creator_id", creator.id)
         .eq("is_approved", true)
         .order("is_featured", { ascending: false })
@@ -128,13 +131,61 @@ export const getCreatorByUsername = createServerFn({ method: "GET" })
         .gte("date", today)
         .order("date");
       unavailableDates = (blocked ?? []).map((b: any) => b.date);
+      // Compute hire success rate from accepted vs total applications
+      const { count: totalApps } = await supabaseAdmin
+        .from("job_applications")
+        .select("id", { count: "exact", head: true })
+        .eq("creator_id", creator.id);
+      const { count: acceptedApps } = await supabaseAdmin
+        .from("job_applications")
+        .select("id", { count: "exact", head: true })
+        .eq("creator_id", creator.id)
+        .eq("status", "accepted");
+      if (totalApps && totalApps > 0) {
+        hireSuccessRate = Math.round(((acceptedApps ?? 0) / totalApps) * 100);
+      }
       await supabaseAdmin
         .from("creators")
         .update({ view_count: (creator.view_count ?? 0) + 1 })
         .eq("id", creator.id);
     }
-    return { profile, creator, portfolios, unavailableDates };
+    return { profile, creator, portfolios, unavailableDates, hireSuccessRate };
   });
+
+export const getPortfolioProject = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ username: z.string().min(1).max(40), projectId: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("id, username, display_name, avatar_url, location")
+      .eq("username", data.username)
+      .maybeSingle();
+    if (!profile) return null;
+    const { data: creator } = await supabaseAdmin
+      .from("creators")
+      .select("id, headline, verification_level")
+      .eq("user_id", profile.id)
+      .eq("is_approved", true)
+      .maybeSingle();
+    if (!creator) return null;
+    const { data: project } = await supabaseAdmin
+      .from("portfolios")
+      .select(
+        "id, title, description, cover_image, project_url, software, view_count, created_at, client_name, industry, timeline, team_size, services, case_study",
+      )
+      .eq("id", data.projectId)
+      .eq("creator_id", creator.id)
+      .eq("is_approved", true)
+      .maybeSingle();
+    if (!project) return null;
+    await supabaseAdmin
+      .from("portfolios")
+      .update({ view_count: (project.view_count ?? 0) + 1 })
+      .eq("id", project.id);
+    return { profile, creator, project };
+  });
+
 
 export const getFeaturedCreators = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ limit: z.number().int().min(1).max(24).default(6) }).parse(d ?? {}))
