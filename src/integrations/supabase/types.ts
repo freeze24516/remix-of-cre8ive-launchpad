@@ -179,6 +179,7 @@ export type Database = {
           about: string | null
           availability: Database["public"]["Enums"]["availability_status"]
           budget_tier: string | null
+          completion_rate: number | null
           created_at: string
           experience: Database["public"]["Enums"]["experience_level"] | null
           headline: string | null
@@ -190,6 +191,7 @@ export type Database = {
           is_verified: boolean
           last_active_at: string
           location_scope: string | null
+          repeat_client_rate: number | null
           response_hours: number
           spotlight_until: string | null
           tools: string[]
@@ -200,11 +202,13 @@ export type Database = {
           verification_level: number
           verification_requested_at: string | null
           view_count: number
+          years_experience: number | null
         }
         Insert: {
           about?: string | null
           availability?: Database["public"]["Enums"]["availability_status"]
           budget_tier?: string | null
+          completion_rate?: number | null
           created_at?: string
           experience?: Database["public"]["Enums"]["experience_level"] | null
           headline?: string | null
@@ -216,6 +220,7 @@ export type Database = {
           is_verified?: boolean
           last_active_at?: string
           location_scope?: string | null
+          repeat_client_rate?: number | null
           response_hours?: number
           spotlight_until?: string | null
           tools?: string[]
@@ -226,11 +231,13 @@ export type Database = {
           verification_level?: number
           verification_requested_at?: string | null
           view_count?: number
+          years_experience?: number | null
         }
         Update: {
           about?: string | null
           availability?: Database["public"]["Enums"]["availability_status"]
           budget_tier?: string | null
+          completion_rate?: number | null
           created_at?: string
           experience?: Database["public"]["Enums"]["experience_level"] | null
           headline?: string | null
@@ -242,6 +249,7 @@ export type Database = {
           is_verified?: boolean
           last_active_at?: string
           location_scope?: string | null
+          repeat_client_rate?: number | null
           response_hours?: number
           spotlight_until?: string | null
           tools?: string[]
@@ -252,6 +260,7 @@ export type Database = {
           verification_level?: number
           verification_requested_at?: string | null
           view_count?: number
+          years_experience?: number | null
         }
         Relationships: [
           {
@@ -445,46 +454,64 @@ export type Database = {
       }
       portfolios: {
         Row: {
+          case_study: Json
           category_id: string | null
+          client_name: string | null
           cover_image: string | null
           created_at: string
           creator_id: string
           description: string | null
           id: string
+          industry: string | null
           is_approved: boolean
           is_featured: boolean
           project_url: string | null
+          services: string[]
           software: string[]
+          team_size: string | null
+          timeline: string | null
           title: string
           updated_at: string
           view_count: number
         }
         Insert: {
+          case_study?: Json
           category_id?: string | null
+          client_name?: string | null
           cover_image?: string | null
           created_at?: string
           creator_id: string
           description?: string | null
           id?: string
+          industry?: string | null
           is_approved?: boolean
           is_featured?: boolean
           project_url?: string | null
+          services?: string[]
           software?: string[]
+          team_size?: string | null
+          timeline?: string | null
           title: string
           updated_at?: string
           view_count?: number
         }
         Update: {
+          case_study?: Json
           category_id?: string | null
+          client_name?: string | null
           cover_image?: string | null
           created_at?: string
           creator_id?: string
           description?: string | null
           id?: string
+          industry?: string | null
           is_approved?: boolean
           is_featured?: boolean
           project_url?: string | null
+          services?: string[]
           software?: string[]
+          team_size?: string | null
+          timeline?: string | null
           title?: string
           updated_at?: string
           view_count?: number
