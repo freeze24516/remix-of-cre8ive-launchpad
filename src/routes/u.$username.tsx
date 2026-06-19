@@ -3,7 +3,8 @@ import { useSuspenseQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { MapPin, Clock, Sparkles, ExternalLink, CalendarCheck, Wallet, Globe2 } from "lucide-react";
+import { MapPin, Clock, Sparkles, CalendarCheck, Wallet, Globe2 } from "lucide-react";
+import { TrustMetrics } from "@/components/portfolio/TrustMetrics";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Badge } from "@/components/ui/badge";
@@ -105,7 +106,7 @@ function CreatorPage() {
     queryFn: () => getCreatorByUsername({ data: { username: params.username } }),
   });
   if (!data) return null;
-  const { profile, creator, portfolios, unavailableDates } = data as any;
+  const { profile, creator, portfolios, unavailableDates, hireSuccessRate } = data as any;
   const startConvFn = useServerFn(startConversation);
   const recordFn = useServerFn(recordEvent);
   useEffect(() => {
@@ -164,38 +165,82 @@ function CreatorPage() {
         ) : (
           <div className="grid gap-10 md:grid-cols-[1fr,280px]">
             <div>
-              <h2 className="text-xl font-semibold">Selected work</h2>
+              <TrustMetrics
+                data={{
+                  responseHours: creator.response_hours,
+                  hireSuccessRate,
+                  repeatClientRate: creator.repeat_client_rate,
+                  completionRate: creator.completion_rate,
+                  yearsExperience: creator.years_experience,
+                }}
+              />
+
+              <h2 className="mt-10 font-display text-2xl font-bold tracking-tight">Selected work</h2>
               {portfolios.length === 0 ? (
                 <p className="mt-3 text-sm text-muted-foreground">No published projects yet.</p>
               ) : (
-                <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2">
-                  {portfolios.map((p: any) => (
-                    <div key={p.id} className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[var(--shadow-card)]">
-                      {p.cover_image && (
-                        <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
-                          <img src={p.cover_image} alt={p.title} className="h-full w-full object-cover transition hover:scale-[1.02]" />
-                        </div>
-                      )}
-                      <div className="p-4">
-                        <div className="flex items-center justify-between gap-2">
-                          <h3 className="font-medium">{p.title}</h3>
-                          {p.project_url && (
-                            <a href={p.project_url} target="_blank" rel="noreferrer" className="text-xs text-accent hover:underline inline-flex items-center gap-1">
-                              View <ExternalLink className="h-3 w-3" />
-                            </a>
+                <div className="mt-6 columns-1 gap-5 sm:columns-2 [&>*]:mb-5">
+                  {portfolios.map((p: any) => {
+                    const cs = (p.case_study as any) ?? {};
+                    const metrics = Array.isArray(cs.metrics) ? cs.metrics : [];
+                    return (
+                      <Link
+                        key={p.id}
+                        to="/u/$username/work/$projectId"
+                        params={{ username: profile.username, projectId: p.id }}
+                        className="group block overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:border-accent/40"
+                      >
+                        {p.cover_image && (
+                          <div className="relative w-full overflow-hidden bg-muted">
+                            <img
+                              src={p.cover_image}
+                              alt={p.title}
+                              className="w-full transition duration-500 group-hover:scale-[1.04]"
+                            />
+                            {p.industry && (
+                              <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white backdrop-blur">
+                                {p.industry}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        <div className="p-4">
+                          <div className="flex items-start justify-between gap-2">
+                            <h3 className="font-display text-base font-semibold">{p.title}</h3>
+                            <span className="shrink-0 text-xs text-muted-foreground opacity-0 transition group-hover:opacity-100">
+                              View case study →
+                            </span>
+                          </div>
+                          {p.client_name && (
+                            <div className="mt-0.5 text-xs text-muted-foreground">for {p.client_name}</div>
+                          )}
+                          {p.description && (
+                            <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{p.description}</p>
+                          )}
+                          {metrics.length > 0 && (
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {metrics.slice(0, 3).map((m: any, i: number) => (
+                                <span
+                                  key={i}
+                                  className="rounded-md border border-border/70 bg-secondary/40 px-2 py-1 text-[11px]"
+                                >
+                                  <span className="font-semibold text-foreground">{m.value}</span>{" "}
+                                  <span className="text-muted-foreground">{m.label}</span>
+                                </span>
+                              ))}
+                            </div>
                           )}
                         </div>
-                        {p.description && <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{p.description}</p>}
-                      </div>
-                    </div>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
 
               {creator.about && (
-                <div className="mt-10">
-                  <h2 className="text-xl font-semibold">About</h2>
-                  <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">{creator.about}</p>
+                <div className="mt-12">
+                  <h2 className="font-display text-2xl font-bold tracking-tight">About</h2>
+                  <p className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">{creator.about}</p>
                 </div>
               )}
 
