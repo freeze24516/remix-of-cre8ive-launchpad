@@ -38,6 +38,7 @@ import { Route as AuthenticatedAdminVerificationsRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedAdminPortfoliosRouteImport } from './routes/_authenticated/admin.portfolios'
+import { Route as UUsernameWorkProjectIdRouteImport } from './routes/u.$username.work.$projectId'
 import { Route as AuthenticatedDashboardJobsNewRouteImport } from './routes/_authenticated/dashboard.jobs.new'
 import { Route as AuthenticatedDashboardJobsJobIdRouteImport } from './routes/_authenticated/dashboard.jobs.$jobId'
 
@@ -199,6 +200,11 @@ const AuthenticatedAdminPortfoliosRoute =
     path: '/portfolios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const UUsernameWorkProjectIdRoute = UUsernameWorkProjectIdRouteImport.update({
+  id: '/work/$projectId',
+  path: '/work/$projectId',
+  getParentRoute: () => UUsernameRoute,
+} as any)
 const AuthenticatedDashboardJobsNewRoute =
   AuthenticatedDashboardJobsNewRouteImport.update({
     id: '/new',
@@ -224,7 +230,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
-  '/u/$username': typeof UUsernameRoute
+  '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
   '/dashboard/jobs/new': typeof AuthenticatedDashboardJobsNewRoute
+  '/u/$username/work/$projectId': typeof UUsernameWorkProjectIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -254,7 +261,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
-  '/u/$username': typeof UUsernameRoute
+  '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
   '/dashboard/jobs/new': typeof AuthenticatedDashboardJobsNewRoute
+  '/u/$username/work/$projectId': typeof UUsernameWorkProjectIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -288,7 +296,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/jobs/$jobId': typeof JobsJobIdRoute
-  '/u/$username': typeof UUsernameRoute
+  '/u/$username': typeof UUsernameRouteWithChildren
   '/_authenticated/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -307,6 +315,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/jobs/$jobId': typeof AuthenticatedDashboardJobsJobIdRoute
   '/_authenticated/dashboard/jobs/new': typeof AuthenticatedDashboardJobsNewRoute
+  '/u/$username/work/$projectId': typeof UUsernameWorkProjectIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -341,6 +350,7 @@ export interface FileRouteTypes {
     | '/dashboard/'
     | '/dashboard/jobs/$jobId'
     | '/dashboard/jobs/new'
+    | '/u/$username/work/$projectId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/jobs/$jobId'
     | '/dashboard/jobs/new'
+    | '/u/$username/work/$projectId'
   id:
     | '__root__'
     | '/'
@@ -404,6 +415,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/jobs/$jobId'
     | '/_authenticated/dashboard/jobs/new'
+    | '/u/$username/work/$projectId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -415,7 +427,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  UUsernameRoute: typeof UUsernameRoute
+  UUsernameRoute: typeof UUsernameRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -623,6 +635,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPortfoliosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/u/$username/work/$projectId': {
+      id: '/u/$username/work/$projectId'
+      path: '/work/$projectId'
+      fullPath: '/u/$username/work/$projectId'
+      preLoaderRoute: typeof UUsernameWorkProjectIdRouteImport
+      parentRoute: typeof UUsernameRoute
+    }
     '/_authenticated/dashboard/jobs/new': {
       id: '/_authenticated/dashboard/jobs/new'
       path: '/new'
@@ -738,6 +757,18 @@ const JobsRouteChildren: JobsRouteChildren = {
 
 const JobsRouteWithChildren = JobsRoute._addFileChildren(JobsRouteChildren)
 
+interface UUsernameRouteChildren {
+  UUsernameWorkProjectIdRoute: typeof UUsernameWorkProjectIdRoute
+}
+
+const UUsernameRouteChildren: UUsernameRouteChildren = {
+  UUsernameWorkProjectIdRoute: UUsernameWorkProjectIdRoute,
+}
+
+const UUsernameRouteWithChildren = UUsernameRoute._addFileChildren(
+  UUsernameRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -747,7 +778,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  UUsernameRoute: UUsernameRoute,
+  UUsernameRoute: UUsernameRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
