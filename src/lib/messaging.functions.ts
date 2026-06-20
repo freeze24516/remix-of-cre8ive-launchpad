@@ -43,17 +43,71 @@ export const getMessages = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const { data: msgs, error } = await context.supabase
       .from("messages")
-      .select("id, sender_id, body, attachments, created_at, read_at")
+      .select("id, sender_id, body, attachments, created_at, read_at, delivered_at")
       .eq("conversation_id", data.conversationId)
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
+    const now = new Date().toISOString();
     await context.supabase
       .from("messages")
-      .update({ read_at: new Date().toISOString() })
+      .update({ delivered_at: now })
+      .eq("conversation_id", data.conversationId)
+      .neq("sender_id", context.userId)
+      .is("delivered_at", null);
+    await context.supabase
+      .from("messages")
+      .update({ read_at: now })
       .eq("conversation_id", data.conversationId)
       .neq("sender_id", context.userId)
       .is("read_at", null);
     return msgs ?? [];
+  });
+
+export const markConversationRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) => z.object({ conversationId: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const now = new Date().toISOString();
+    await context.supabase
+      .from("messages")
+      .update({ delivered_at: now })
+      .eq("conversation_id", data.conversationId)
+      .neq("sender_id", context.userId)
+      .is("delivered_at", null);
+    await context.supabase
+      .from("messages")
+      .update({ read_at: now })
+      .eq("conversation_id", data.conversationId)
+      .neq("sender_id", context.userId)
+      .is("read_at", null);
+    return { ok: true };
+  });
+
+export const searchMessages = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d) =>
+    z.object({ query: z.string().min(1).max(120), conversationId: z.string().uuid().optional() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const me = context.userId;
+    const { data: convs } = await context.supabase
+      .from("conversations")
+      .select("id")
+      .or(`user_a.eq.${me},user_b.eq.${me}`);
+    const ids = (convs ?? []).map((c: any) => c.id);
+    if (!ids.length) return [];
+    const scope = data.conversationId ? [data.conversationId].filter((i) => ids.includes(i)) : ids;
+    if (!scope.length) return [];
+    const term = data.query.replace(/[%_]/g, "");
+    const { data: rows, error } = await context.supabase
+      .from("messages")
+      .select("id, conversation_id, sender_id, body, attachments, created_at")
+      .in("conversation_id", scope)
+      .ilike("body", `%${term}%`)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) throw new Error(error.message);
+    return rows ?? [];
   });
 
 const attachmentSchema = z.object({
