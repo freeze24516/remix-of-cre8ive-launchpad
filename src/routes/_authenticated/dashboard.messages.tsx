@@ -271,16 +271,8 @@ function Thread({
     onError: (e: any) => toast.error(e.message ?? "Failed"),
   });
 
-  async function handleVoiceRecorded(file: File, durationMs: number) {
+  async function handleVoiceRecorded(file: File, _durationMs: number) {
     await uploadFile(file, { kind: "voice" });
-    // auto-send voice messages
-    setTimeout(() => {
-      if (attachments.length === 0) {
-        // attachments state hasn't updated yet, so submit on next tick via local logic
-      }
-      send.mutate();
-    }, 0);
-    void durationMs;
   }
 
   const { data: searchResults } = useQuery({
