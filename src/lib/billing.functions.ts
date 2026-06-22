@@ -147,13 +147,13 @@ export const setCreatorBoost = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const until = data.days === 0 ? null : new Date(Date.now() + data.days * 86400_000).toISOString();
-    const patch: Record<string, any> =
+    const patch =
       data.kind === "featured"
         ? { featured_until: until, is_featured: !!until }
         : data.kind === "boost"
           ? { boost_expiry: until, boosted_creator: !!until }
           : { sponsored_until: until };
-    const { error } = await supabaseAdmin.from("creators").update(patch).eq("id", data.creatorId);
+    const { error } = await supabaseAdmin.from("creators").update(patch as never).eq("id", data.creatorId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
