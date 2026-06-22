@@ -1,6 +1,6 @@
 import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Shield, Flag, BadgeCheck, FolderKanban, Users } from "lucide-react";
+import { Shield, Flag, BadgeCheck, FolderKanban, Users, DollarSign } from "lucide-react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getMyStaffRoles } from "@/lib/admin.functions";
 
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 const nav = [
   { to: "/admin", label: "Overview", Icon: Shield, exact: true },
+  { to: "/admin/revenue", label: "Revenue", Icon: DollarSign, exact: false },
   { to: "/admin/reports", label: "Reports", Icon: Flag, exact: false },
   { to: "/admin/verifications", label: "Verifications", Icon: BadgeCheck, exact: false },
   { to: "/admin/portfolios", label: "Portfolios", Icon: FolderKanban, exact: false },
