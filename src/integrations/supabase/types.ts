@@ -41,6 +41,54 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_events: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          id: string
+          kind: string
+          metadata: Json
+          occurred_at: string
+          provider: string | null
+          provider_ref: string | null
+          reference_id: string | null
+          status: string
+          tier: Database["public"]["Enums"]["subscription_tier"] | null
+          user_id: string | null
+        }
+        Insert: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          kind: string
+          metadata?: Json
+          occurred_at?: string
+          provider?: string | null
+          provider_ref?: string | null
+          reference_id?: string | null
+          status?: string
+          tier?: Database["public"]["Enums"]["subscription_tier"] | null
+          user_id?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          kind?: string
+          metadata?: Json
+          occurred_at?: string
+          provider?: string | null
+          provider_ref?: string | null
+          reference_id?: string | null
+          status?: string
+          tier?: Database["public"]["Enums"]["subscription_tier"] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           icon: string | null
@@ -178,10 +226,13 @@ export type Database = {
         Row: {
           about: string | null
           availability: Database["public"]["Enums"]["availability_status"]
+          boost_expiry: string | null
+          boosted_creator: boolean
           budget_tier: string | null
           completion_rate: number | null
           created_at: string
           experience: Database["public"]["Enums"]["experience_level"] | null
+          featured_until: string | null
           headline: string | null
           hire_count: number
           id: string
@@ -193,6 +244,7 @@ export type Database = {
           location_scope: string | null
           repeat_client_rate: number | null
           response_hours: number
+          sponsored_until: string | null
           spotlight_until: string | null
           tools: string[]
           updated_at: string
@@ -207,10 +259,13 @@ export type Database = {
         Insert: {
           about?: string | null
           availability?: Database["public"]["Enums"]["availability_status"]
+          boost_expiry?: string | null
+          boosted_creator?: boolean
           budget_tier?: string | null
           completion_rate?: number | null
           created_at?: string
           experience?: Database["public"]["Enums"]["experience_level"] | null
+          featured_until?: string | null
           headline?: string | null
           hire_count?: number
           id?: string
@@ -222,6 +277,7 @@ export type Database = {
           location_scope?: string | null
           repeat_client_rate?: number | null
           response_hours?: number
+          sponsored_until?: string | null
           spotlight_until?: string | null
           tools?: string[]
           updated_at?: string
@@ -236,10 +292,13 @@ export type Database = {
         Update: {
           about?: string | null
           availability?: Database["public"]["Enums"]["availability_status"]
+          boost_expiry?: string | null
+          boosted_creator?: boolean
           budget_tier?: string | null
           completion_rate?: number | null
           created_at?: string
           experience?: Database["public"]["Enums"]["experience_level"] | null
+          featured_until?: string | null
           headline?: string | null
           hire_count?: number
           id?: string
@@ -251,6 +310,7 @@ export type Database = {
           location_scope?: string | null
           repeat_client_rate?: number | null
           response_hours?: number
+          sponsored_until?: string | null
           spotlight_until?: string | null
           tools?: string[]
           updated_at?: string
@@ -540,6 +600,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          commission_rate: number
           created_at: string
           display_name: string
           id: string
@@ -547,12 +608,15 @@ export type Database = {
           kind: Database["public"]["Enums"]["user_kind"]
           languages: string[]
           location: string | null
+          plan_expiry: string | null
+          subscription_plan: Database["public"]["Enums"]["subscription_tier"]
           updated_at: string
           username: string
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          commission_rate?: number
           created_at?: string
           display_name: string
           id: string
@@ -560,12 +624,15 @@ export type Database = {
           kind?: Database["public"]["Enums"]["user_kind"]
           languages?: string[]
           location?: string | null
+          plan_expiry?: string | null
+          subscription_plan?: Database["public"]["Enums"]["subscription_tier"]
           updated_at?: string
           username: string
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          commission_rate?: number
           created_at?: string
           display_name?: string
           id?: string
@@ -573,6 +640,8 @@ export type Database = {
           kind?: Database["public"]["Enums"]["user_kind"]
           languages?: string[]
           location?: string | null
+          plan_expiry?: string | null
+          subscription_plan?: Database["public"]["Enums"]["subscription_tier"]
           updated_at?: string
           username?: string
         }
@@ -707,6 +776,63 @@ export type Database = {
           },
         ]
       }
+      subscription_plans: {
+        Row: {
+          badge_label: string | null
+          created_at: string
+          features: Json
+          id: string
+          includes_featured: boolean
+          includes_priority_support: boolean
+          is_active: boolean
+          max_job_applications_per_month: number | null
+          max_portfolio_projects: number | null
+          name: string
+          price_monthly_cents: number
+          price_yearly_cents: number
+          sort_order: number
+          tagline: string | null
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+        }
+        Insert: {
+          badge_label?: string | null
+          created_at?: string
+          features?: Json
+          id?: string
+          includes_featured?: boolean
+          includes_priority_support?: boolean
+          is_active?: boolean
+          max_job_applications_per_month?: number | null
+          max_portfolio_projects?: number | null
+          name: string
+          price_monthly_cents?: number
+          price_yearly_cents?: number
+          sort_order?: number
+          tagline?: string | null
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+        }
+        Update: {
+          badge_label?: string | null
+          created_at?: string
+          features?: Json
+          id?: string
+          includes_featured?: boolean
+          includes_priority_support?: boolean
+          is_active?: boolean
+          max_job_applications_per_month?: number | null
+          max_portfolio_projects?: number | null
+          name?: string
+          price_monthly_cents?: number
+          price_yearly_cents?: number
+          sort_order?: number
+          tagline?: string | null
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -728,9 +854,67 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          amount_cents: number
+          billing_cycle: string
+          cancelled_at: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          provider: string | null
+          provider_ref: string | null
+          started_at: string
+          status: string
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents?: number
+          billing_cycle?: string
+          cancelled_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          provider?: string | null
+          provider_ref?: string | null
+          started_at?: string
+          status?: string
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          billing_cycle?: string
+          cancelled_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          provider?: string | null
+          provider_ref?: string | null
+          started_at?: string
+          status?: string
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      admin_revenue_summary: {
+        Row: {
+          day: string | null
+          events: number | null
+          gross_cents: number | null
+          kind: string | null
+          paid_cents: number | null
+          refunded_cents: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_or_create_conversation: { Args: { _other: string }; Returns: string }
@@ -763,6 +947,7 @@ export type Database = {
       report_status: "open" | "reviewing" | "resolved" | "dismissed"
       report_target: "creator" | "client" | "job" | "portfolio" | "message"
       review_direction: "client_to_creator" | "creator_to_client"
+      subscription_tier: "free" | "pro" | "elite"
       user_kind: "client" | "creator"
     }
     CompositeTypes: {
@@ -912,6 +1097,7 @@ export const Constants = {
       report_status: ["open", "reviewing", "resolved", "dismissed"],
       report_target: ["creator", "client", "job", "portfolio", "message"],
       review_direction: ["client_to_creator", "creator_to_client"],
+      subscription_tier: ["free", "pro", "elite"],
       user_kind: ["client", "creator"],
     },
   },
