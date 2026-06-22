@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -30,12 +31,14 @@ import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_aut
 import { Route as AuthenticatedDashboardPortfolioRouteImport } from './routes/_authenticated/dashboard.portfolio'
 import { Route as AuthenticatedDashboardNotificationsRouteImport } from './routes/_authenticated/dashboard.notifications'
 import { Route as AuthenticatedDashboardMessagesRouteImport } from './routes/_authenticated/dashboard.messages'
+import { Route as AuthenticatedDashboardMembershipRouteImport } from './routes/_authenticated/dashboard.membership'
 import { Route as AuthenticatedDashboardJobsRouteImport } from './routes/_authenticated/dashboard.jobs'
 import { Route as AuthenticatedDashboardCreatorRouteImport } from './routes/_authenticated/dashboard.creator'
 import { Route as AuthenticatedDashboardApplicationsRouteImport } from './routes/_authenticated/dashboard.applications'
 import { Route as AuthenticatedDashboardAnalyticsRouteImport } from './routes/_authenticated/dashboard.analytics'
 import { Route as AuthenticatedAdminVerificationsRouteImport } from './routes/_authenticated/admin.verifications'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedAdminRevenueRouteImport } from './routes/_authenticated/admin.revenue'
 import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin.reports'
 import { Route as AuthenticatedAdminPortfoliosRouteImport } from './routes/_authenticated/admin.portfolios'
 import { Route as UUsernameWorkProjectIdRouteImport } from './routes/u.$username.work.$projectId'
@@ -55,6 +58,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JobsRoute = JobsRouteImport.update({
@@ -153,6 +161,12 @@ const AuthenticatedDashboardMessagesRoute =
     path: '/messages',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardMembershipRoute =
+  AuthenticatedDashboardMembershipRouteImport.update({
+    id: '/membership',
+    path: '/membership',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardJobsRoute =
   AuthenticatedDashboardJobsRouteImport.update({
     id: '/jobs',
@@ -188,6 +202,12 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/users',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminRevenueRoute =
+  AuthenticatedAdminRevenueRouteImport.update({
+    id: '/revenue',
+    path: '/revenue',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminReportsRoute =
   AuthenticatedAdminReportsRouteImport.update({
     id: '/reports',
@@ -223,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/jobs': typeof JobsRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -233,12 +254,14 @@ export interface FileRoutesByFullPath {
   '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/revenue': typeof AuthenticatedAdminRevenueRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
+  '/dashboard/membership': typeof AuthenticatedDashboardMembershipRoute
   '/dashboard/messages': typeof AuthenticatedDashboardMessagesRoute
   '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -256,6 +279,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/jobs': typeof JobsRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -264,12 +288,14 @@ export interface FileRoutesByTo {
   '/u/$username': typeof UUsernameRouteWithChildren
   '/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/admin/revenue': typeof AuthenticatedAdminRevenueRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
+  '/dashboard/membership': typeof AuthenticatedDashboardMembershipRoute
   '/dashboard/messages': typeof AuthenticatedDashboardMessagesRoute
   '/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -289,6 +315,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
   '/jobs': typeof JobsRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -299,12 +326,14 @@ export interface FileRoutesById {
   '/u/$username': typeof UUsernameRouteWithChildren
   '/_authenticated/admin/portfolios': typeof AuthenticatedAdminPortfoliosRoute
   '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
+  '/_authenticated/admin/revenue': typeof AuthenticatedAdminRevenueRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/verifications': typeof AuthenticatedAdminVerificationsRoute
   '/_authenticated/dashboard/analytics': typeof AuthenticatedDashboardAnalyticsRoute
   '/_authenticated/dashboard/applications': typeof AuthenticatedDashboardApplicationsRoute
   '/_authenticated/dashboard/creator': typeof AuthenticatedDashboardCreatorRoute
   '/_authenticated/dashboard/jobs': typeof AuthenticatedDashboardJobsRouteWithChildren
+  '/_authenticated/dashboard/membership': typeof AuthenticatedDashboardMembershipRoute
   '/_authenticated/dashboard/messages': typeof AuthenticatedDashboardMessagesRoute
   '/_authenticated/dashboard/notifications': typeof AuthenticatedDashboardNotificationsRoute
   '/_authenticated/dashboard/portfolio': typeof AuthenticatedDashboardPortfolioRoute
@@ -324,6 +353,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/browse'
     | '/jobs'
+    | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -334,12 +364,14 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/admin/portfolios'
     | '/admin/reports'
+    | '/admin/revenue'
     | '/admin/users'
     | '/admin/verifications'
     | '/dashboard/analytics'
     | '/dashboard/applications'
     | '/dashboard/creator'
     | '/dashboard/jobs'
+    | '/dashboard/membership'
     | '/dashboard/messages'
     | '/dashboard/notifications'
     | '/dashboard/portfolio'
@@ -357,6 +389,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/browse'
     | '/jobs'
+    | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -365,12 +398,14 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/admin/portfolios'
     | '/admin/reports'
+    | '/admin/revenue'
     | '/admin/users'
     | '/admin/verifications'
     | '/dashboard/analytics'
     | '/dashboard/applications'
     | '/dashboard/creator'
     | '/dashboard/jobs'
+    | '/dashboard/membership'
     | '/dashboard/messages'
     | '/dashboard/notifications'
     | '/dashboard/portfolio'
@@ -389,6 +424,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/browse'
     | '/jobs'
+    | '/pricing'
     | '/privacy'
     | '/sitemap.xml'
     | '/terms'
@@ -399,12 +435,14 @@ export interface FileRouteTypes {
     | '/u/$username'
     | '/_authenticated/admin/portfolios'
     | '/_authenticated/admin/reports'
+    | '/_authenticated/admin/revenue'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/verifications'
     | '/_authenticated/dashboard/analytics'
     | '/_authenticated/dashboard/applications'
     | '/_authenticated/dashboard/creator'
     | '/_authenticated/dashboard/jobs'
+    | '/_authenticated/dashboard/membership'
     | '/_authenticated/dashboard/messages'
     | '/_authenticated/dashboard/notifications'
     | '/_authenticated/dashboard/portfolio'
@@ -424,6 +462,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   BrowseRoute: typeof BrowseRoute
   JobsRoute: typeof JobsRouteWithChildren
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -451,6 +490,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/jobs': {
@@ -579,6 +625,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardMessagesRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/membership': {
+      id: '/_authenticated/dashboard/membership'
+      path: '/membership'
+      fullPath: '/dashboard/membership'
+      preLoaderRoute: typeof AuthenticatedDashboardMembershipRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/jobs': {
       id: '/_authenticated/dashboard/jobs'
       path: '/jobs'
@@ -619,6 +672,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/revenue': {
+      id: '/_authenticated/admin/revenue'
+      path: '/revenue'
+      fullPath: '/admin/revenue'
+      preLoaderRoute: typeof AuthenticatedAdminRevenueRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/reports': {
@@ -662,6 +722,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPortfoliosRoute: typeof AuthenticatedAdminPortfoliosRoute
   AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
+  AuthenticatedAdminRevenueRoute: typeof AuthenticatedAdminRevenueRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminVerificationsRoute: typeof AuthenticatedAdminVerificationsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -670,6 +731,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPortfoliosRoute: AuthenticatedAdminPortfoliosRoute,
   AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
+  AuthenticatedAdminRevenueRoute: AuthenticatedAdminRevenueRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminVerificationsRoute: AuthenticatedAdminVerificationsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
@@ -699,6 +761,7 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardApplicationsRoute: typeof AuthenticatedDashboardApplicationsRoute
   AuthenticatedDashboardCreatorRoute: typeof AuthenticatedDashboardCreatorRoute
   AuthenticatedDashboardJobsRoute: typeof AuthenticatedDashboardJobsRouteWithChildren
+  AuthenticatedDashboardMembershipRoute: typeof AuthenticatedDashboardMembershipRoute
   AuthenticatedDashboardMessagesRoute: typeof AuthenticatedDashboardMessagesRoute
   AuthenticatedDashboardNotificationsRoute: typeof AuthenticatedDashboardNotificationsRoute
   AuthenticatedDashboardPortfolioRoute: typeof AuthenticatedDashboardPortfolioRoute
@@ -716,6 +779,8 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
     AuthenticatedDashboardCreatorRoute: AuthenticatedDashboardCreatorRoute,
     AuthenticatedDashboardJobsRoute:
       AuthenticatedDashboardJobsRouteWithChildren,
+    AuthenticatedDashboardMembershipRoute:
+      AuthenticatedDashboardMembershipRoute,
     AuthenticatedDashboardMessagesRoute: AuthenticatedDashboardMessagesRoute,
     AuthenticatedDashboardNotificationsRoute:
       AuthenticatedDashboardNotificationsRoute,
@@ -775,6 +840,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   BrowseRoute: BrowseRoute,
   JobsRoute: JobsRouteWithChildren,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
