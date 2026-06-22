@@ -27,6 +27,7 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
           <Link to="/browse" className="transition-colors hover:text-foreground">Browse creators</Link>
           <Link to="/jobs" className="transition-colors hover:text-foreground">Jobs</Link>
+          <Link to="/pricing" className="transition-colors hover:text-foreground">Pricing</Link>
           <a href="#categories" className="transition-colors hover:text-foreground">Categories</a>
           <a href="#how" className="transition-colors hover:text-foreground">How it works</a>
         </nav>
