@@ -1,0 +1,1 @@
+ALTER VIEW public.admin_revenue_summary SET (security_invoker = on);
