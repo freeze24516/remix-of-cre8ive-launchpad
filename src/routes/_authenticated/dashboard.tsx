@@ -27,19 +27,22 @@ function DashboardLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
-      <div className="mx-auto grid w-full max-w-7xl flex-1 gap-8 px-6 py-10 md:grid-cols-[220px,1fr]">
-        <aside className="md:sticky md:top-20 md:self-start">
-          <nav className="flex gap-1 overflow-x-auto md:flex-col">
+      <div className="mx-auto grid w-full max-w-[1600px] flex-1 gap-6 px-4 py-6 sm:px-6 sm:py-10 lg:gap-8 lg:grid-cols-[240px,1fr] xl:grid-cols-[260px,1fr]">
+        <aside className="lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto">
+          <nav
+            className="-mx-1 flex gap-1 overflow-x-auto rounded-xl bg-background/80 px-1 py-1 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:mx-0 lg:flex-col lg:overflow-visible lg:bg-card/40 lg:p-2 lg:border lg:border-border/60"
+            aria-label="Dashboard navigation"
+          >
             {nav.map(({ to, label, Icon, exact }) => {
               const active = exact ? pathname === to : pathname.startsWith(to);
               return (
                 <Link
                   key={to}
                   to={to}
-                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${active ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"}`}
+                  className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-sm transition lg:shrink ${active ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"}`}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{label}</span>
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="whitespace-nowrap lg:whitespace-normal">{label}</span>
                 </Link>
               );
             })}
