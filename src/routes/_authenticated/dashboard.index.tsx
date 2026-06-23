@@ -10,6 +10,7 @@ export const Route = createFileRoute("/_authenticated/dashboard/")({
 });
 
 function DashboardOverview() {
+  const navigate = useNavigate();
   const { data } = useQuery({
     queryKey: ["dashboard-overview"],
     queryFn: async () => {
@@ -27,6 +28,10 @@ function DashboardOverview() {
       return { profile, creator, portfolioCount };
     },
   });
+
+  useEffect(() => {
+    if (data && !data.profile?.kind) navigate({ to: "/onboarding", replace: true });
+  }, [data, navigate]);
 
   if (!data) return <div className="text-muted-foreground">Loading…</div>;
   const { profile, creator, portfolioCount } = data;
