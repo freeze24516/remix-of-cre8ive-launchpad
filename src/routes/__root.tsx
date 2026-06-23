@@ -78,13 +78,20 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#0b0b10" },
+      { name: "color-scheme", content: "dark" },
+      { name: "format-detection", content: "telephone=no" },
       { title: "CRE8IVE — Marketplace for creative talent" },
       { name: "description", content: "Hire vetted video editors, motion designers, photographers, illustrators and more on CRE8IVE." },
+      { property: "og:site_name", content: "CRE8IVE" },
       { property: "og:title", content: "CRE8IVE — Marketplace for creative talent" },
       { property: "og:description", content: "Hire vetted creative talent across video, motion, photography, design and more." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "CRE8IVE — Marketplace for creative talent" },
+      { name: "twitter:description", content: "Hire vetted creative talent across video, motion, photography, design and more." },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
     ],
     links: [
       {
